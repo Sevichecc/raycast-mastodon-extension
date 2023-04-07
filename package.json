@@ -1,0 +1,78 @@
+{
+  "$schema": "https://www.raycast.com/schemas/extension.json",
+  "name": "akkoma",
+  "title": "Post to Akkoma",
+  "description": "Send your post from Raycast to Akkoma / Pleroma / Mastodon",
+  "icon": "akkoma-icon.png",
+  "author": "SevicheCC",
+  "categories": [
+    "Communication"
+  ],
+  "license": "MIT",
+  "commands": [
+    {
+      "name": "index",
+      "title": "Post to Fediverse",
+      "description": "Send your post from Raycast to Akkoma / Pleroma / Mastodon",
+      "mode": "view"
+    }
+  ],
+  "preferences": [
+    {
+      "name": "instance",
+      "type": "textfield",
+      "required": true,
+      "title": "Akkoma instance's URL",
+      "description": "Your Akkoma / Pleroma / Mastodon instance's URL",
+      "link": "https://github.com/Sevichecc/raycast-akkoma-extension",
+      "placeholder": "such as: example.dev"
+    },
+    {
+      "name": "defaultVisbility",
+      "type": "dropdown",
+      "required": false,
+      "data": [
+        {
+          "title": "🌎 Public",
+          "value": "public"
+        },
+        {
+          "title": "👥 Private",
+          "value": "private"
+        },
+        {
+          "title": "🙈 Unlist",
+          "value": "unlist"
+        },
+        {
+          "title": "✉️ Direct",
+          "value": "direct"
+        }
+      ],
+      "title": "Akkoma instance's URL",
+      "description": "Your Akkoma / Pleroma / Mastodon instance's URL",
+      "link": "https://github.com/Sevichecc/raycast-akkoma-extension",
+      "placeholder": "such as: example.dev"
+    }
+  ],
+  "dependencies": {
+    "@raycast/api": "^1.49.2",
+    "masto": "^5.10.0",
+    "node-fetch": "^3.3.1"
+  },
+  "devDependencies": {
+    "@raycast/eslint-config": "1.0.5",
+    "@types/node": "18.8.3",
+    "@types/react": "18.0.9",
+    "eslint": "^7.32.0",
+    "prettier": "^2.5.1",
+    "typescript": "^4.4.3"
+  },
+  "scripts": {
+    "build": "ray build -e dist",
+    "dev": "ray develop",
+    "fix-lint": "ray lint --fix",
+    "lint": "ray lint",
+    "publish": "npx @raycast/api@latest publish"
+  }
+}
