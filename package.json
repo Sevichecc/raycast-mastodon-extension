@@ -28,7 +28,7 @@
       "placeholder": "such as: example.dev"
     },
     {
-      "name": "defaultVisbility",
+      "name": "defaultVisibility",
       "type": "dropdown",
       "required": false,
       "data": [
@@ -37,16 +37,20 @@
           "value": "public"
         },
         {
-          "title": "👥 Private",
-          "value": "private"
-        },
-        {
           "title": "🙈 Unlist",
           "value": "unlist"
         },
         {
+          "title": "👥 Private",
+          "value": "private"
+        },
+        {
           "title": "✉️ Direct",
           "value": "direct"
+        },
+        {
+          "title": "📍 Local",
+          "value": "local"
         }
       ],
       "title": "Akkoma instance's URL",
