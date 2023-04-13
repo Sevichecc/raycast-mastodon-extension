@@ -38,7 +38,7 @@ export interface AppResponse {
 
 interface Poll {
   expired_in: number;
-  hide_totals?: boolean | string;
+  hide_totals?: boolean |  string;
   multiple?: boolean | string | number;
   options: string[]
 }
