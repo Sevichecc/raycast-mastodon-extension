@@ -1,23 +1,18 @@
-import { useEffect } from "react";
+import { useEffect,useState } from "react";
 import { Form, ActionPanel, Action, showToast } from "@raycast/api";
-import { authorize } from "./oauth";
 import { postNewStatus } from "./api";
-import { Status, VisibilityOption } from "./types";
+import { Status } from "./types";
+import { authorize } from "./oauth";
+import VisibilityDropdown from "./components/VisibilityDropdown";
+import StatusContent from "./components/statusContent";
 
 export default function Command() {
+  const [isMarkdown, setIsMarkdown] = useState<boolean>(true);
   useEffect(() => {
     authorize();
   }, []);
 
-   const visibilityOptions: VisibilityOption[] = [
-     { value: "direct", title: "Direct" },
-     { value: "private", title: "Private" },
-     { value: "unlisted", title: "Unlisted" },
-     { value: "public", title: "Public" },
-     { value: "local", title: "Local" },
-   ];
-  
-  const handleSubmit = async (values: Status) => {
+  const handleSubmit = async (values: Partial<Status>) => {
     try {
       await postNewStatus({ ...values });
       showToast({ title: "Submitted form", message: "Status has been posted!" });
@@ -36,15 +31,19 @@ export default function Command() {
       }
     >
       <Form.TextField id="textfield" title="Content Warning" placeholder="" />
-      <Form.TextArea id="staus" title="Post detail" placeholder="" enableMarkdown={true} />
+      <StatusContent isMarkdown={isMarkdown} />
       <Form.Separator />
       <Form.DatePicker id="datepicker" title="Scheduled Time" />
-      <Form.Dropdown id="visibility" title="Visibility" storeValue={true} defaultValue="">
-        {visibilityOptions.map(({value, title}) => (
-          <Form.Dropdown.Item key={value} value={value} title={title} />
-        ))}
-      </Form.Dropdown>
+      <VisibilityDropdown />
       <Form.FilePicker id="files" />
+      <Form.Checkbox
+        id="content-type"
+        title="Markdown"
+        label="Yes"
+        value={isMarkdown}
+        onChange={setIsMarkdown}
+        storeValue={true}
+      />
       <Form.Checkbox id="sensitive" title="Sensitive" label="Sensitive" />
     </Form>
   );

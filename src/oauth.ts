@@ -46,7 +46,6 @@ const refreshToken = async (
   return tokenResponse;
 };
 
-
 export const authorize = async (): Promise<void> => {
   const { instance } = getPreferenceValues<Preference>();
   const tokenSet = await client.getTokens();
