@@ -68,4 +68,5 @@ export interface StatusResponse {
   create_at: Date;
   content: string;
   application: Application;
+  url: string;
 }
