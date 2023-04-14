@@ -1,14 +1,15 @@
 import { useState } from "react";
 import { Form } from "@raycast/api";
 
-interface StatusContentProps {
+interface statusProps {
   isMarkdown: boolean;
+  draftStatus: string | undefined;
 }
 
-const StatusContent = ({ isMarkdown }: StatusContentProps) => {
-  const [statusContent, setStatusContent] = useState<string>("");
-  const [error, setError] = useState<string>("");
-
+const StatusContent = ({ isMarkdown, draftStatus }: statusProps) => {
+  const [error, setError] = useState<boolean>(false);
+  const [statusContent, setStatusContent] = useState<string>(draftStatus || "");
+  
   return (
     <>
       <Form.TextArea
@@ -18,10 +19,10 @@ const StatusContent = ({ isMarkdown }: StatusContentProps) => {
         enableMarkdown={isMarkdown}
         autoFocus={true}
         value={statusContent}
-        error={error}
+        error={error ? "Content should not be empty!" : ""}
         onChange={setStatusContent}
         onBlur={() => {
-          setError(!statusContent ? "content should't be empty!" : "");
+          setError(!statusContent.trim());
         }}
       />
     </>

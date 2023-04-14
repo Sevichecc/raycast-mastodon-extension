@@ -1,7 +1,7 @@
 import fetch from "node-fetch";
 import { OAuth, getPreferenceValues } from "@raycast/api";
 import { Credentials, Preference, Status ,StatusResponse} from "./types";
-import { authorize, client } from "./oauth";
+import { client } from "./oauth";
 
 export const fetchToken = async (params: URLSearchParams, errorMessage: string): Promise<OAuth.TokenResponse> => {
   const { instance } = getPreferenceValues<Preference>();
