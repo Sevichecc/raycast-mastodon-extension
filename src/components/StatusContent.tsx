@@ -9,21 +9,17 @@ interface statusProps {
 const StatusContent = ({ isMarkdown, draftStatus }: statusProps) => {
   const [error, setError] = useState<boolean>(false);
   const [statusContent, setStatusContent] = useState<string>(draftStatus || "");
-  
+
   return (
     <>
       <Form.TextArea
         id="status"
         title="Content"
-        placeholder="Write something down"
+        placeholder={`Write something down ${isMarkdown ? "with Markdown" : ""}`}
         enableMarkdown={isMarkdown}
         autoFocus={true}
         value={statusContent}
-        error={error ? "Content should not be empty!" : ""}
         onChange={setStatusContent}
-        onBlur={() => {
-          setError(!statusContent.trim());
-        }}
       />
     </>
   );

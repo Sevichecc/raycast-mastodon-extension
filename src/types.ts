@@ -1,4 +1,10 @@
-import type {Icon} from '@raycast/api'
+import type { Icon } from "@raycast/api";
+
+export interface AkkomaError {
+  code: string;
+  message: string;
+}
+
 export interface Preference {
   instance: string;
   defaultVisibility: VisibilityScope;
@@ -9,7 +15,7 @@ export type VisibilityScope = "public" | "unlisted" | "direct" | "private" | "lo
 export interface VisibilityOption {
   title: string;
   value: VisibilityScope;
-  icon: Icon
+  icon: Icon;
 }
 
 interface Application {
@@ -61,5 +67,5 @@ export interface StatusResponse {
   id: string;
   create_at: Date;
   content: string;
-  application: Application
+  application: Application;
 }

@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { Form, ActionPanel, Action, showToast, popToRoot, LaunchProps, Toast } from "@raycast/api";
 import { postNewStatus } from "./api";
-import { Status } from "./types";
+import { Status, AkkomaError } from "./types";
 import { authorize } from "./oauth";
+
 import VisibilityDropdown from "./components/VisibilityDropdown";
 import StatusContent from "./components/statusContent";
 
@@ -17,17 +18,19 @@ export default function Command(props: LaunchProps<{ draftValues: Partial<Status
 
   const handleSubmit = async (values: Partial<Status>) => {
     try {
+      if (!values.status) throw new Error("You might forget the content, right ? |･ω･)");
+      showToast(Toast.Style.Animated, "Publishing to the Fediverse ... ᕕ( ᐛ )ᕗ");
+
       await postNewStatus({
         ...values,
         content_type: isMarkdown ? "text/markdown" : "text/plain",
-      });
+      })
 
-      setCw("");
-      showToast({ title: "Success", message: "Status has been posted!" });
+      showToast(Toast.Style.Success, "Status has been published (≧∇≦)/ ! ");
       popToRoot();
     } catch (error) {
-      console.error(error);
-      showToast({ title: "Error", message: "Something went wrong!", style: Toast.Style.Failure });
+      const requestErr = error as AkkomaError;
+      showToast(Toast.Style.Failure, "Error", requestErr.message);
     }
   };
 
@@ -40,7 +43,7 @@ export default function Command(props: LaunchProps<{ draftValues: Partial<Status
         </ActionPanel>
       }
     >
-      <Form.TextField id="spoiler_text" title="CW" placeholder="content warning" value={cw} onChange={setCw} />
+      <Form.TextField id="spoiler_text" title="CW" placeholder={"content warning"} value={cw} onChange={setCw} />
       <StatusContent isMarkdown={isMarkdown} draftStatus={draftValues?.status} />
       <VisibilityDropdown />
       <Form.Checkbox

@@ -1,6 +1,6 @@
 import fetch from "node-fetch";
 import { OAuth, getPreferenceValues } from "@raycast/api";
-import { Credentials, Preference, Status ,StatusResponse} from "./types";
+import { Credentials, Preference, Status, StatusResponse } from "./types";
 import { client } from "./oauth";
 
 export const fetchToken = async (params: URLSearchParams, errorMessage: string): Promise<OAuth.TokenResponse> => {
@@ -12,8 +12,7 @@ export const fetchToken = async (params: URLSearchParams, errorMessage: string):
   });
 
   if (!response.ok) {
-    console.error(errorMessage, await response.text());
-    throw new Error(response.statusText);
+    throw new Error(errorMessage);
   }
 
   return (await response.json()) as OAuth.TokenResponse;
@@ -35,9 +34,7 @@ export const createApp = async (): Promise<Credentials> => {
     }),
   });
 
-  if (!response.ok) {
-    throw new Error("Failed to create Akkoma app");
-  }
+  if (!response.ok) throw new Error("Failed to create Akkoma app");
 
   return (await response.json()) as Credentials;
 };
@@ -69,9 +66,10 @@ export const postNewStatus = async ({
     }),
   });
 
-  if (!response.ok) {
-    throw new Error("Failed to pulish new status!");
+  if (!response.ok) { 
+    throw new Error("Failed to pulish :(");
   }
+    
 
   return (await response.json()) as StatusResponse;
 };
