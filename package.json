@@ -1,8 +1,8 @@
 {
   "$schema": "https://www.raycast.com/schemas/extension.json",
   "name": "akkoma",
-  "title": "Post to Akkoma",
-  "description": "Send your post from Raycast to Akkoma / Pleroma / Mastodon",
+  "title": "Akkoma",
+  "description": "Send your post from Raycast to Akkoma / Pleroma",
   "icon": "akkoma-icon.png",
   "author": "SevicheCC",
   "categories": [
@@ -11,9 +11,15 @@
   "license": "MIT",
   "commands": [
     {
-      "name": "index",
-      "title": "Post to Fediverse",
-      "description": "Send your post from Raycast to Akkoma / Pleroma / Mastodon",
+      "name": "simple-status",
+      "title": "Simple post",
+      "description": "Publish simple text status with text",
+      "mode": "view"
+    },
+    {
+      "name": "detail-status",
+      "title": "Publish with image or files",
+      "description": "Publish status with image or files",
       "mode": "view"
     }
   ],
@@ -23,7 +29,7 @@
       "type": "textfield",
       "required": true,
       "title": "Akkoma instance's URL",
-      "description": "Your Akkoma / Pleroma / Mastodon instance's URL",
+      "description": "Your Akkoma / Pleroma  instance's URL",
       "link": "https://github.com/Sevichecc/raycast-akkoma-extension",
       "placeholder": "such as: example.dev"
     },
@@ -31,17 +37,19 @@
       "name": "defaultVisibility",
       "type": "dropdown",
       "required": false,
+      "title": "Default Visiblity",
+      "description": "Status default visiblity",
       "data": [
         {
           "title": "🌎 Public",
           "value": "public"
         },
         {
-          "title": "🙈 Unlist",
-          "value": "unlist"
+          "title": "🙈 Unlisted",
+          "value": "unlisted"
         },
         {
-          "title": "👥 Private",
+          "title": "👥 Followers-only",
           "value": "private"
         },
         {
@@ -49,14 +57,10 @@
           "value": "direct"
         },
         {
-          "title": "📍 Local",
+          "title": "📍 Local-only",
           "value": "local"
         }
-      ],
-      "title": "Akkoma instance's URL",
-      "description": "Your Akkoma / Pleroma / Mastodon instance's URL",
-      "link": "https://github.com/Sevichecc/raycast-akkoma-extension",
-      "placeholder": "such as: example.dev"
+      ]
     }
   ],
   "dependencies": {
