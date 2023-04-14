@@ -63,10 +63,19 @@ export interface Status {
   visibility: VisibilityScope;
 }
 
+
+
 export interface StatusResponse {
   id: string;
   create_at: Date;
   content: string;
   application: Application;
   url: string;
+}
+
+export interface Account {
+  acct: string;
+  display_name: string;
+  fqn: string;
+  avatar_static: string;
 }

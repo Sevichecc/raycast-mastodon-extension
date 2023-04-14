@@ -1,6 +1,6 @@
-import { OAuth, getPreferenceValues } from "@raycast/api";
+import { LocalStorage, OAuth, getPreferenceValues } from "@raycast/api";
 import { Preference } from "./types";
-import { fetchToken,createApp} from "./api";
+import { fetchToken, createApp, fetchAccountInfo } from "./api";
 
 export const client = new OAuth.PKCEClient({
   redirectMethod: OAuth.RedirectMethod.Web,
@@ -16,7 +16,6 @@ const requestAccessToken = async (
   authRequest: OAuth.AuthorizationRequest,
   authCode: string
 ): Promise<OAuth.TokenResponse> => {
-
   const params = new URLSearchParams();
   params.append("client_id", clientId);
   params.append("client_secret", clientSecret);
@@ -33,7 +32,6 @@ const refreshToken = async (
   clientSecret: string,
   refreshToken: string
 ): Promise<OAuth.TokenResponse> => {
-
   const params = new URLSearchParams();
   params.append("client_id", clientId);
   params.append("client_secret", clientSecret);
@@ -52,6 +50,7 @@ export const authorize = async (): Promise<void> => {
 
   if (tokenSet?.accessToken) {
     if (tokenSet.refreshToken && tokenSet.isExpired()) {
+      LocalStorage.clear()
       const { client_id, client_secret } = await createApp();
       await client.setTokens(await refreshToken(client_id, client_secret, tokenSet.refreshToken));
     }
@@ -64,7 +63,11 @@ export const authorize = async (): Promise<void> => {
     clientId: client_id,
     scope: "read write",
   });
-
+  
   const { authorizationCode } = await client.authorize(authRequest);
   await client.setTokens(await requestAccessToken(client_id, client_secret, authRequest, authorizationCode));
+
+  const { fqn, avatar_static } = await fetchAccountInfo();
+  await LocalStorage.setItem("account-fqn", fqn);
+  await LocalStorage.setItem("account-avator", avatar_static);
 };

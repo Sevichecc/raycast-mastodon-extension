@@ -1,6 +1,6 @@
 import fetch from "node-fetch";
 import { OAuth, getPreferenceValues } from "@raycast/api";
-import { Credentials, Preference, Status, StatusResponse } from "./types";
+import { Credentials, Preference, Status, StatusResponse, Account } from "./types";
 import { client } from "./oauth";
 
 export const fetchToken = async (params: URLSearchParams, errorMessage: string): Promise<OAuth.TokenResponse> => {
@@ -11,12 +11,10 @@ export const fetchToken = async (params: URLSearchParams, errorMessage: string):
     body: params,
   });
 
-  if (!response.ok) {
-    throw new Error(errorMessage);
-  }
-
+  if (!response.ok) throw new Error(errorMessage);
   return (await response.json()) as OAuth.TokenResponse;
 };
+
 
 export const createApp = async (): Promise<Credentials> => {
   const { instance } = getPreferenceValues<Preference>();
@@ -38,6 +36,7 @@ export const createApp = async (): Promise<Credentials> => {
 
   return (await response.json()) as Credentials;
 };
+
 
 export const postNewStatus = async ({
   status,
@@ -66,10 +65,24 @@ export const postNewStatus = async ({
     }),
   });
 
-  if (!response.ok) { 
-    throw new Error("Failed to pulish :(");
-  }
-    
+  if (!response.ok) throw new Error("Failed to pulish :(");
 
   return (await response.json()) as StatusResponse;
+};
+
+
+export const fetchAccountInfo = async (): Promise<Account> => {
+  const { instance } = getPreferenceValues<Preference>();
+  const tokenSet = await client.getTokens();
+
+  const response = await fetch(`https://${instance}/api/v1/accounts/verify_credentials`, {
+    method: "GET",
+    headers: {
+      "Authorization": "Bearer " + tokenSet?.accessToken,
+    },
+  });
+
+  if (!response.ok) throw new Error("Failed to fetch account's info :(");
+
+  return (await response.json()) as Account;
 };
