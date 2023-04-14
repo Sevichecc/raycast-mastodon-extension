@@ -7,7 +7,6 @@ interface statusProps {
 }
 
 const StatusContent = ({ isMarkdown, draftStatus }: statusProps) => {
-  const [error, setError] = useState<boolean>(false);
   const [statusContent, setStatusContent] = useState<string>(draftStatus || "");
 
   return (
