@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Form, ActionPanel, Action, showToast, popToRoot, LaunchProps } from "@raycast/api";
+import { Form, ActionPanel, Action, showToast, popToRoot, LaunchProps,Toast } from "@raycast/api";
 import { postNewStatus } from "./api";
 import { Status } from "./types";
 import { authorize } from "./oauth";
@@ -33,7 +33,7 @@ export default function Command(props: LaunchProps<{ draftValues: Partial<Status
       popToRoot();
     } catch (error) {
       console.error(error);
-      showToast({ title: "Error", message: "Something went wrong!" });
+      showToast({ title: "Error", message: "Something went wrong!", style: Toast.Style.Failure });
     }
   };
 
