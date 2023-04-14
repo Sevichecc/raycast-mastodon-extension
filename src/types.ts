@@ -63,7 +63,6 @@ export interface Status {
   visibility: VisibilityScope;
 }
 
-
 export interface StatusResponse {
   id: string;
   create_at: Date;

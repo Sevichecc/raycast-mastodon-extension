@@ -1,9 +1,5 @@
 const Actions = () => {
-  return (
-    <>
-      
-    </>
-  )
-}
+  return <></>;
+};
 
-export default Actions
+export default Actions;

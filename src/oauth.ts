@@ -50,7 +50,7 @@ export const authorize = async (): Promise<void> => {
 
   if (tokenSet?.accessToken) {
     if (tokenSet.refreshToken && tokenSet.isExpired()) {
-      LocalStorage.clear()
+      LocalStorage.clear();
       const { client_id, client_secret } = await createApp();
       await client.setTokens(await refreshToken(client_id, client_secret, tokenSet.refreshToken));
     }
@@ -63,7 +63,7 @@ export const authorize = async (): Promise<void> => {
     clientId: client_id,
     scope: "read write",
   });
-  
+
   const { authorizationCode } = await client.authorize(authRequest);
   await client.setTokens(await requestAccessToken(client_id, client_secret, authRequest, authorizationCode));
 

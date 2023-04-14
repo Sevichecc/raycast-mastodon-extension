@@ -15,7 +15,6 @@ export const fetchToken = async (params: URLSearchParams, errorMessage: string):
   return (await response.json()) as OAuth.TokenResponse;
 };
 
-
 export const createApp = async (): Promise<Credentials> => {
   const { instance } = getPreferenceValues<Preference>();
 
@@ -37,7 +36,6 @@ export const createApp = async (): Promise<Credentials> => {
   return (await response.json()) as Credentials;
 };
 
-
 export const postNewStatus = async ({
   status,
   visibility,
@@ -53,7 +51,7 @@ export const postNewStatus = async ({
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": "Bearer " + tokenSet?.accessToken,
+      Authorization: "Bearer " + tokenSet?.accessToken,
     },
     body: JSON.stringify({
       status,
@@ -70,7 +68,6 @@ export const postNewStatus = async ({
   return (await response.json()) as StatusResponse;
 };
 
-
 export const fetchAccountInfo = async (): Promise<Account> => {
   const { instance } = getPreferenceValues<Preference>();
   const tokenSet = await client.getTokens();
@@ -78,7 +75,7 @@ export const fetchAccountInfo = async (): Promise<Account> => {
   const response = await fetch(`https://${instance}/api/v1/accounts/verify_credentials`, {
     method: "GET",
     headers: {
-      "Authorization": "Bearer " + tokenSet?.accessToken,
+      Authorization: "Bearer " + tokenSet?.accessToken,
     },
   });
 

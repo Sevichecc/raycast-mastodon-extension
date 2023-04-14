@@ -1,11 +1,7 @@
-import { Detail } from "@raycast/api"
+import { Detail } from "@raycast/api";
 
 const StatusPreview = () => {
-  return (
-    <div>
-      
-    </div>
-  )
-}
+  return <div></div>;
+};
 
-export default StatusPreview
+export default StatusPreview;
