@@ -14,9 +14,9 @@ export default function Command(props: LaunchProps<{ draftValues: Partial<Status
   const [cw, setCw] = useState<string>(draftValues?.spoiler_text || "");
   const [isMarkdown, setIsMarkdown] = useState<boolean>(true);
 
-  const cached = cache.get("latest-pubished-status");
+  const cached = cache.get("latest_published_status");
 
-  const [statusInfo, setStatusInfo] = useState<StatusResponse>(cached ? JSON.parse(cached) : "");
+  const [statusInfo, setStatusInfo] = useState<StatusResponse>(cached ? JSON.parse(cached) : null);
   const [openActionText, setOpenActionText] = useState<string>("Open the last published status");
   
   useEffect(() => {
@@ -34,7 +34,7 @@ export default function Command(props: LaunchProps<{ draftValues: Partial<Status
       });
 
       setStatusInfo(response);
-      cache.set("latest-pubished-status", JSON.stringify({ ...response }));
+      cache.set("latest_published_status", JSON.stringify(response));
       showToast(Toast.Style.Success, "Status has been published (≧∇≦)/ ! ");
       setOpenActionText("Open the status in Browser");
       setTimeout(() => {
@@ -52,7 +52,7 @@ export default function Command(props: LaunchProps<{ draftValues: Partial<Status
       actions={
         <ActionPanel>
           <Action.SubmitForm onSubmit={handleSubmit} title="Publish" icon={Icon.Upload} />
-          <Action.OpenInBrowser url={statusInfo.url} title={openActionText} />
+          { statusInfo && <Action.OpenInBrowser url={statusInfo.url} title={openActionText} />}
         </ActionPanel>
       }
     >
