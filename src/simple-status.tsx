@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState,useRef } from "react";
 import {
   Form,
   ActionPanel,
@@ -21,16 +21,21 @@ import StatusContent from "./components/statusContent";
 
 const cache = new Cache();
 
-export default function Command(props: LaunchProps<{ draftValues: Partial<Status> }>) {
+type SimpleStatus = Pick<Status, "content_type" | "status" | "spoiler_text" | "visibility">;
+
+export default function Command(props: LaunchProps<{ draftValues: SimpleStatus }>) {
   const { instance } = getPreferenceValues<Preference>();
   const { draftValues } = props;
   const [cw, setCw] = useState<string>(draftValues?.spoiler_text || "");
   const [isMarkdown, setIsMarkdown] = useState(true);
+  const [showCw, setShowCw] = useState(false);
   const [openActionText, setOpenActionText] = useState("Open the last published status");
   const [fqn, setFqn] = useState("");
 
   const cached = cache.get("latest_published_status");
   const [statusInfo, setStatusInfo] = useState<StatusResponse>(cached ? JSON.parse(cached) : null);
+
+  const cwRef = useRef<Form.TextField>(null);
 
   useEffect(() => {
     const init = async () => {
@@ -42,7 +47,7 @@ export default function Command(props: LaunchProps<{ draftValues: Partial<Status
     init();
   }, []);
 
-  const handleSubmit = async (values: Pick<Status, "content_type" | "status" | "spoiler_text" | "visibility">) => {
+  const handleSubmit = async (values: SimpleStatus) => {
     try {
       if (!values.status) throw new Error("You might forget the content, right ? |･ω･)");
       showToast(Toast.Style.Animated, "Publishing to the Fediverse ... ᕕ( ᐛ )ᕗ");
@@ -65,6 +70,13 @@ export default function Command(props: LaunchProps<{ draftValues: Partial<Status
     }
   };
 
+  const handleCw = () => {
+    setShowCw(!showCw)
+    if (cwRef.current) {
+      cwRef.current.focus();
+    }
+  }
+
   return (
     <Form
       enableDrafts
@@ -77,17 +89,13 @@ export default function Command(props: LaunchProps<{ draftValues: Partial<Status
       }
     >
       {fqn && <Form.Description title="Account" text={fqn} />}
-      <Form.TextField id="spoiler_text" title="CW" placeholder={"content warning"} value={cw} onChange={setCw} />
+      {showCw && (
+        <Form.TextField id="spoiler_text" title="CW" placeholder={"content warning"} value={cw} onChange={setCw} ref={cwRef} />
+      )}
       <StatusContent isMarkdown={isMarkdown} draftStatus={draftValues?.status} />
       <VisibilityDropdown />
-      <Form.Checkbox
-        id="markdown"
-        title="Markdown"
-        label="Yes"
-        value={isMarkdown}
-        onChange={setIsMarkdown}
-        storeValue
-      />
+      <Form.Checkbox id="markdown" title="Markdown" label="" value={isMarkdown} onChange={setIsMarkdown} storeValue />
+      <Form.Checkbox id="showCw" title="Sensitive" label="" value={showCw} onChange={handleCw} storeValue />
     </Form>
   );
 }
