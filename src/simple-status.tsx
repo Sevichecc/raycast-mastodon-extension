@@ -75,8 +75,8 @@ export default function SimpleCommand(props: CommandProps) {
     }
   };
 
-  const handleCw = () => {
-    setShowCw(!showCw);
+  const handleCw = (value:boolean) => {
+    setShowCw(value);
     if (cwRef.current) {
       cwRef.current.focus();
     }
@@ -93,7 +93,7 @@ export default function SimpleCommand(props: CommandProps) {
         </ActionPanel>
       }
     >
-      {fqn && <Form.Description title="Account" text={fqn} />}
+      <Form.Description title="Account" text={fqn} />
       {showCw && (
         <Form.TextField
           id="spoiler_text"
