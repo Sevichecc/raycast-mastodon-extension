@@ -1,7 +1,7 @@
 import fetch from "node-fetch";
 import { OAuth, getPreferenceValues } from "@raycast/api";
 import { Credentials, Preference, Status ,StatusResponse} from "./types";
-import { authorize } from "./oauth";
+import { authorize, client } from "./oauth";
 
 export const fetchToken = async (params: URLSearchParams, errorMessage: string): Promise<OAuth.TokenResponse> => {
   const { instance } = getPreferenceValues<Preference>();
@@ -30,7 +30,7 @@ export const createApp = async (): Promise<Credentials> => {
     body: JSON.stringify({
       client_name: "raycast-akkoma-extension",
       redirect_uris: "https://raycast.com/redirect?packageName=Extension",
-      scopes: "read write push",
+      scopes: "read write",
       website: "https://raycast.com",
     }),
   });
@@ -48,26 +48,29 @@ export const postNewStatus = async ({
   spoiler_text,
   sensitive,
   scheduled_at,
-}: Partial<Status>) : Promise<StatusResponse> => {
+  content_type,
+}: Partial<Status>): Promise<StatusResponse> => {
   const { instance } = getPreferenceValues<Preference>();
-  const token = await authorize();
+  const tokenSet = await client.getTokens();
 
   const response = await fetch(`https://${instance}/api/v1/statuses`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": "Bearer" + token,
+      "Authorization": "Bearer " + tokenSet?.accessToken,
     },
     body: JSON.stringify({
       status,
       visibility,
       spoiler_text,
       sensitive,
+      content_type,
       scheduled_at,
     }),
   });
+
   if (!response.ok) {
-    throw new Error("Failed to pulish new status");
+    throw new Error("Failed to pulish new status!");
   }
 
   return (await response.json()) as StatusResponse;

@@ -2,12 +2,12 @@ import { OAuth, getPreferenceValues } from "@raycast/api";
 import { Preference } from "./types";
 import { fetchToken,createApp} from "./api";
 
-const client = new OAuth.PKCEClient({
+export const client = new OAuth.PKCEClient({
   redirectMethod: OAuth.RedirectMethod.Web,
   providerName: "Akkoma",
   providerIcon: "akkoma-icon.png",
   providerId: "akkoma",
-  description: "Connect to your Akkoma | Pleroma | Mastodon account",
+  description: "Connect to your Akkoma / Pleroma acount",
 });
 
 const requestAccessToken = async (
@@ -59,14 +59,12 @@ export const authorize = async (): Promise<void> => {
   }
 
   const { client_id, client_secret } = await createApp();
-
   const authRequest = await client.authorizationRequest({
     endpoint: `https://${instance}/oauth/authorize`,
     clientId: client_id,
-    scope: "read write push",
+    scope: "read write",
   });
 
   const { authorizationCode } = await client.authorize(authRequest);
-
   await client.setTokens(await requestAccessToken(client_id, client_secret, authRequest, authorizationCode));
 };
