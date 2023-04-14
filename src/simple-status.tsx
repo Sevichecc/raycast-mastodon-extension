@@ -1,29 +1,34 @@
-import { useEffect, useState,useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
   Form,
   ActionPanel,
   Action,
   showToast,
   popToRoot,
-  LaunchProps,
   Toast,
   Cache,
   Icon,
   LocalStorage,
   getPreferenceValues,
+  LaunchProps,
 } from "@raycast/api";
+
 import { postNewStatus } from "./api";
-import { Status, AkkomaError, StatusResponse, Preference } from "./types";
+import { AkkomaError, StatusResponse, Preference, Status } from "./types";
 import { authorize } from "./oauth";
 
 import VisibilityDropdown from "./components/VisibilityDropdown";
-import StatusContent from "./components/statusContent";
+import StatusContent from "./components/StatusContent";
 
 const cache = new Cache();
 
 type SimpleStatus = Pick<Status, "content_type" | "status" | "spoiler_text" | "visibility">;
 
-export default function Command(props: LaunchProps<{ draftValues: SimpleStatus }>) {
+interface CommandProps extends LaunchProps<{ draftValues: SimpleStatus }> {
+  children?: React.ReactNode;
+}
+
+export default function SimpleCommand(props: CommandProps) {
   const { instance } = getPreferenceValues<Preference>();
   const { draftValues } = props;
   const [cw, setCw] = useState<string>(draftValues?.spoiler_text || "");
@@ -47,7 +52,7 @@ export default function Command(props: LaunchProps<{ draftValues: SimpleStatus }
     init();
   }, []);
 
-  const handleSubmit = async (values: SimpleStatus) => {
+  const handleSubmit = async (values: Status) => {
     try {
       if (!values.status) throw new Error("You might forget the content, right ? |･ω･)");
       showToast(Toast.Style.Animated, "Publishing to the Fediverse ... ᕕ( ᐛ )ᕗ");
@@ -71,11 +76,11 @@ export default function Command(props: LaunchProps<{ draftValues: SimpleStatus }
   };
 
   const handleCw = () => {
-    setShowCw(!showCw)
+    setShowCw(!showCw);
     if (cwRef.current) {
       cwRef.current.focus();
     }
-  }
+  };
 
   return (
     <Form
@@ -90,10 +95,18 @@ export default function Command(props: LaunchProps<{ draftValues: SimpleStatus }
     >
       {fqn && <Form.Description title="Account" text={fqn} />}
       {showCw && (
-        <Form.TextField id="spoiler_text" title="CW" placeholder={"content warning"} value={cw} onChange={setCw} ref={cwRef} />
+        <Form.TextField
+          id="spoiler_text"
+          title="CW"
+          placeholder={"content warning"}
+          value={cw}
+          onChange={setCw}
+          ref={cwRef}
+        />
       )}
       <StatusContent isMarkdown={isMarkdown} draftStatus={draftValues?.status} />
       <VisibilityDropdown />
+      {props.children}
       <Form.Checkbox id="markdown" title="Markdown" label="" value={isMarkdown} onChange={setIsMarkdown} storeValue />
       <Form.Checkbox id="showCw" title="Sensitive" label="" value={showCw} onChange={handleCw} storeValue />
     </Form>

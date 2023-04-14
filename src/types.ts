@@ -51,18 +51,17 @@ export interface Status {
   status: string;
   content_type: string;
   expires_in: number;
-  in_reply_to_conversation_id: string;
-  in_reply_to_id: string;
+  in_reply_to_conversation_id?: string;
+  in_reply_to_id?: string;
   language: string;
   media_ids: string[];
-  poll: Poll;
-  preview: boolean | string | number;
+  poll?: Poll;
+  preview?: boolean | string | number;
   scheduled_at: Date;
   sensitive: string | boolean | number;
-  to: string[];
+  to?: string[];
   visibility: VisibilityScope;
 }
-
 
 
 export interface StatusResponse {
