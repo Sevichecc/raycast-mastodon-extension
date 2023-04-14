@@ -1,6 +1,6 @@
 import fetch from "node-fetch";
 import { OAuth, getPreferenceValues } from "@raycast/api";
-import { AppResponse, Preference, Status } from "./types";
+import { Credentials, Preference, Status ,StatusResponse} from "./types";
 import { authorize } from "./oauth";
 
 export const fetchToken = async (params: URLSearchParams, errorMessage: string): Promise<OAuth.TokenResponse> => {
@@ -19,7 +19,7 @@ export const fetchToken = async (params: URLSearchParams, errorMessage: string):
   return (await response.json()) as OAuth.TokenResponse;
 };
 
-export const createApp = async (): Promise<AppResponse> => {
+export const createApp = async (): Promise<Credentials> => {
   const { instance } = getPreferenceValues<Preference>();
 
   const response = await fetch(`https://${instance}/api/v1/apps`, {
@@ -39,16 +39,16 @@ export const createApp = async (): Promise<AppResponse> => {
     throw new Error("Failed to create Akkoma app");
   }
 
-  return (await response.json()) as AppResponse;
+  return (await response.json()) as Credentials;
 };
 
-export const postNewStatus = async <T>({
+export const postNewStatus = async ({
   status,
   visibility,
   spoiler_text,
   sensitive,
   scheduled_at,
-}: Status): Promise<T> => {
+}: Partial<Status>) : Promise<StatusResponse> => {
   const { instance } = getPreferenceValues<Preference>();
   const token = await authorize();
 
@@ -66,10 +66,9 @@ export const postNewStatus = async <T>({
       scheduled_at,
     }),
   });
-
   if (!response.ok) {
     throw new Error("Failed to pulish new status");
   }
 
-  return (await response.json()) as T;
+  return (await response.json()) as StatusResponse;
 };
