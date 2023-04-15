@@ -1,4 +1,4 @@
-import type { Icon, LaunchProps } from "@raycast/api";
+import type { Icon } from "@raycast/api";
 
 export type VisibilityScope = "public" | "unlisted" | "direct" | "private" | "local";
 

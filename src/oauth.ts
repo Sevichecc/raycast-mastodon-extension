@@ -10,33 +10,37 @@ export const client = new OAuth.PKCEClient({
   description: "Connect to your Akkoma / Pleroma acount",
 });
 
-const requestToken = async (
+const requestAccessToken = async (
   clientId: string,
   clientSecret: string,
-  grantType: string,
-  authRequest?: OAuth.AuthorizationRequest,
-  authCode?: string,
-  refreshToken?: string
+  authRequest: OAuth.AuthorizationRequest,
+  authCode: string
 ): Promise<OAuth.TokenResponse> => {
   const params = new URLSearchParams();
   params.append("client_id", clientId);
   params.append("client_secret", clientSecret);
-  params.append("grant_type", grantType);
+  params.append("code", authCode);
+  params.append("code_verifier", authRequest.codeVerifier);
+  params.append("grant_type", "authorization_code");
+  params.append("redirect_uri", authRequest.redirectURI);
 
-  if (grantType === "authorization_code") {
-    params.append("code", authCode!);
-    params.append("code_verifier", authRequest!.codeVerifier);
-    params.append("redirect_uri", authRequest!.redirectURI);
-  } else {
-    params.append("refresh_token", refreshToken!);
-  }
+  return await apiServer.fetchToken(params, "fetch tokens error:");
+};
 
-  const tokenResponse = await apiServer.fetchToken(params, `Error while requesting ${grantType} tokens:`);
+const refreshToken = async (
+  clientId: string,
+  clientSecret: string,
+  refreshToken: string
+): Promise<OAuth.TokenResponse> => {
+  const params = new URLSearchParams();
+  params.append("client_id", clientId);
+  params.append("client_secret", clientSecret);
+  params.append("refresh_token", refreshToken);
+  params.append("grant_type", "refresh_token");
 
-  if (grantType === "refresh_token") {
-    tokenResponse.refresh_token = tokenResponse.refresh_token ?? refreshToken;
-  }
+  const tokenResponse = await apiServer.fetchToken(params, "refresh tokens error:");
 
+  tokenResponse.refresh_token = tokenResponse.refresh_token ?? refreshToken;
   return tokenResponse;
 };
 
@@ -48,9 +52,7 @@ export const authorize = async (): Promise<void> => {
     if (tokenSet.refreshToken && tokenSet.isExpired()) {
       LocalStorage.clear();
       const { client_id, client_secret } = await apiServer.createApp();
-      await client.setTokens(
-        await requestToken(client_id, client_secret, "refresh_token", undefined, undefined, tokenSet.refreshToken)
-      );
+      await client.setTokens(await refreshToken(client_id, client_secret, tokenSet.refreshToken));
     }
     return;
   }
@@ -63,13 +65,9 @@ export const authorize = async (): Promise<void> => {
   });
 
   const { authorizationCode } = await client.authorize(authRequest);
-  await client.setTokens(
-    await requestToken(client_id, client_secret, "authorization_code", authRequest, authorizationCode)
-  );
+  await client.setTokens(await requestAccessToken(client_id, client_secret, authRequest, authorizationCode));
 
   const { fqn, avatar_static } = await apiServer.fetchAccountInfo();
   await LocalStorage.setItem("account-fqn", fqn);
   await LocalStorage.setItem("account-avator", avatar_static);
 };
-
-export default { authorize };
