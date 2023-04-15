@@ -13,7 +13,7 @@ import {
   LaunchProps,
 } from "@raycast/api";
 
-import { postNewStatus } from "./api";
+import { postNewStatus, uploadAttachment } from "./api";
 import { AkkomaError, StatusResponse, Preference, Status } from "./types";
 import { authorize } from "./oauth";
 
@@ -26,6 +26,11 @@ type SimpleStatus = Pick<Status, "content_type" | "status" | "spoiler_text" | "v
 
 interface CommandProps extends LaunchProps<{ draftValues: SimpleStatus }> {
   children?: React.ReactNode;
+}
+
+interface StausForm extends Status {
+  files: string[];
+  description?: string;
 }
 
 export default function SimpleCommand(props: CommandProps) {
@@ -52,15 +57,29 @@ export default function SimpleCommand(props: CommandProps) {
     init();
   }, []);
 
-  const handleSubmit = async (values: Status) => {
+  const handleSubmit = async ({ spoiler_text, status, scheduled_at, visibility, files, description }: StausForm) => {
     try {
-      if (!values.status) throw new Error("You might forget the content, right ? |･ω･)");
+      if (!status) throw new Error("You might forget the content, right ? |･ω･)");
+
       showToast(Toast.Style.Animated, "Publishing to the Fediverse ... ᕕ( ᐛ )ᕗ");
 
-      const response = await postNewStatus({
-        ...values,
+      const mediaIds = await Promise.all(
+        files?.map(async (file) => {
+          const { id} = await uploadAttachment({ file, description });
+          return id;
+        })
+      );
+
+      const newStatus: Partial<Status> = {
+        spoiler_text,
+        status,
+        scheduled_at,
+        visibility,
         content_type: isMarkdown ? "text/markdown" : "text/plain",
-      });
+        media_ids: mediaIds,
+      };
+
+      const response = await postNewStatus(newStatus);
 
       setStatusInfo(response);
       cache.set("latest_published_status", JSON.stringify(response));
@@ -75,7 +94,7 @@ export default function SimpleCommand(props: CommandProps) {
     }
   };
 
-  const handleCw = (value:boolean) => {
+  const handleCw = (value: boolean) => {
     setShowCw(value);
     if (cwRef.current) {
       cwRef.current.focus();
@@ -105,7 +124,7 @@ export default function SimpleCommand(props: CommandProps) {
         />
       )}
       <StatusContent isMarkdown={isMarkdown} draftStatus={draftValues?.status} />
-      <VisibilityDropdown />
+      {!props.children && <VisibilityDropdown />}
       {props.children}
       <Form.Checkbox id="markdown" title="Markdown" label="" value={isMarkdown} onChange={setIsMarkdown} storeValue />
       <Form.Checkbox id="showCw" title="Sensitive" label="" value={showCw} onChange={handleCw} storeValue />

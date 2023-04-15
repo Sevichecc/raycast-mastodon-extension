@@ -1,6 +1,16 @@
 import fetch from "node-fetch";
+import fs from "fs";
+import { FormData, File } from "node-fetch";
 import { OAuth, getPreferenceValues } from "@raycast/api";
-import { Credentials, Preference, Status, StatusResponse, Account } from "./types";
+import {
+  Credentials,
+  Preference,
+  Status,
+  StatusResponse,
+  Account,
+  StatusAttachment,
+  UploadAttachResponse,
+} from "./types";
 import { client } from "./oauth";
 
 export const fetchToken = async (params: URLSearchParams, errorMessage: string): Promise<OAuth.TokenResponse> => {
@@ -43,6 +53,7 @@ export const postNewStatus = async ({
   sensitive,
   scheduled_at,
   content_type,
+  media_ids,
 }: Partial<Status>): Promise<StatusResponse> => {
   const { instance } = getPreferenceValues<Preference>();
   const tokenSet = await client.getTokens();
@@ -51,7 +62,7 @@ export const postNewStatus = async ({
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: "Bearer " + tokenSet?.accessToken,
+      Authorization: `Bearer ${tokenSet?.accessToken}`,
     },
     body: JSON.stringify({
       status,
@@ -60,6 +71,7 @@ export const postNewStatus = async ({
       sensitive,
       content_type,
       scheduled_at,
+      media_ids,
     }),
   });
 
@@ -75,11 +87,36 @@ export const fetchAccountInfo = async (): Promise<Account> => {
   const response = await fetch(`https://${instance}/api/v1/accounts/verify_credentials`, {
     method: "GET",
     headers: {
-      Authorization: "Bearer " + tokenSet?.accessToken,
+      Authorization: `Bearer ${tokenSet?.accessToken}`,
     },
   });
 
   if (!response.ok) throw new Error("Failed to fetch account's info :(");
 
   return (await response.json()) as Account;
+};
+
+export const uploadAttachment = async ({ file, description }: StatusAttachment): Promise<UploadAttachResponse> => {
+  const { instance } = getPreferenceValues<Preference>();
+  const tokenSet = await client.getTokens();
+
+  const attachment = fs.readFileSync(file);
+  const attachmentData = new File([attachment], file);
+  await attachmentData.arrayBuffer();
+  
+  const formData = new FormData();
+  formData.append("file", attachmentData);
+  formData.append("description", description ?? "");
+
+  const response = await fetch(`https://${instance}/api/v1/media/`, {
+    method: "POST", 
+    headers: {
+      Authorization: `Bearer ${tokenSet?.accessToken}`,
+    },
+    body: formData,
+  });
+
+  if (!response.ok) throw new Error("Could not upload attechments");
+
+  return (await response.json()) as UploadAttachResponse;
 };
