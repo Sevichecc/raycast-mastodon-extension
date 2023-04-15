@@ -12,11 +12,8 @@ import {
   getPreferenceValues,
   LaunchProps,
 } from "@raycast/api";
-
 import apiServer from "./api";
-
 import { AkkomaError, StatusResponse, Preference, Status } from "./types";
-
 import { authorize } from "./oauth";
 
 import VisibilityDropdown from "./components/VisibilityDropdown";
@@ -38,7 +35,7 @@ export default function SimpleCommand(props: CommandProps) {
   const { draftValues } = props;
   const [cw, setCw] = useState<string>(draftValues?.spoiler_text || "");
   const [isMarkdown, setIsMarkdown] = useState(true);
-  const [showCw, setShowCw] = useState(false);
+  const [sensitive, setSensitive] = useState(false);
   const [openActionText, setOpenActionText] = useState("Open the last published status");
   const [fqn, setFqn] = useState("");
 
@@ -59,7 +56,7 @@ export default function SimpleCommand(props: CommandProps) {
 
   const handleSubmit = async ({ spoiler_text, status, scheduled_at, visibility, files, description }: StatusForm) => {
     try {
-      if (!status) throw new Error("You might forget the content, right ? |･ω･)");
+      if (!status && !files) throw new Error("You might forget the content, right ? |･ω･)");
 
       showToast(Toast.Style.Animated, "Publishing to the Fediverse ... ᕕ( ᐛ )ᕗ");
 
@@ -70,6 +67,7 @@ export default function SimpleCommand(props: CommandProps) {
         })
       );
 
+      console.log(scheduled_at);
       const newStatus: Partial<Status> = {
         spoiler_text,
         status,
@@ -77,12 +75,17 @@ export default function SimpleCommand(props: CommandProps) {
         visibility,
         content_type: isMarkdown ? "text/markdown" : "text/plain",
         media_ids: mediaIds,
+        sensitive,
       };
 
       const response = await apiServer.postNewStatus(newStatus);
 
       setStatusInfo(response);
-      cache.set("latest_published_status", JSON.stringify(response));
+
+      if (!scheduled_at) {
+        cache.set("latest_published_status", JSON.stringify(response));
+      }
+      
       showToast(Toast.Style.Success, "Status has been published (≧∇≦)/ ! ");
       setOpenActionText("Open the status in Browser");
       setTimeout(() => {
@@ -95,7 +98,7 @@ export default function SimpleCommand(props: CommandProps) {
   };
 
   const handleCw = (value: boolean) => {
-    setShowCw(value);
+    setSensitive(value);
     if (cwRef.current) {
       cwRef.current.focus();
     }
@@ -113,7 +116,7 @@ export default function SimpleCommand(props: CommandProps) {
       }
     >
       <Form.Description title="Account" text={fqn} />
-      {showCw && (
+      {sensitive && (
         <Form.TextField
           id="spoiler_text"
           title="CW"
@@ -127,7 +130,14 @@ export default function SimpleCommand(props: CommandProps) {
       {!props.children && <VisibilityDropdown />}
       {props.children}
       <Form.Checkbox id="markdown" title="Markdown" label="" value={isMarkdown} onChange={setIsMarkdown} storeValue />
-      <Form.Checkbox id="showCw" title="Sensitive" label="" value={showCw} onChange={handleCw} storeValue />
+      <Form.Checkbox
+        id="sensitive"
+        title="Mark as Sensitive"
+        label=""
+        value={sensitive}
+        onChange={handleCw}
+        storeValue
+      />
     </Form>
   );
 }
