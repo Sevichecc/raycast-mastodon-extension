@@ -1,16 +1,11 @@
-import type { Icon } from "@raycast/api";
+import type { Icon, LaunchProps } from "@raycast/api";
 
-export interface AkkomaError {
-  code: string;
-  message: string;
-}
+export type VisibilityScope = "public" | "unlisted" | "direct" | "private" | "local";
 
 export interface Preference {
   instance: string;
   defaultVisibility: VisibilityScope;
 }
-
-export type VisibilityScope = "public" | "unlisted" | "direct" | "private" | "local";
 
 export interface VisibilityOption {
   title: string;
@@ -18,6 +13,13 @@ export interface VisibilityOption {
   icon: Icon;
 }
 
+// Error
+export interface AkkomaError {
+  code: string;
+  message: string;
+}
+
+// Application and Credentials
 interface Application {
   name: string;
   website: string;
@@ -33,12 +35,7 @@ export interface Credentials {
   vapid_key: string;
 }
 
-export interface ApiResponse {
-  id: number;
-  created_at: string;
-  text: string;
-}
-
+// Statuses
 interface Poll {
   expired_in: number;
   hide_totals?: boolean | string;
@@ -63,6 +60,13 @@ export interface Status {
   to?: string[];
 }
 
+// API Responses
+export interface ApiResponse {
+  id: number;
+  created_at: string;
+  text: string;
+}
+
 export interface StatusResponse {
   id: string;
   create_at: Date;
@@ -78,21 +82,22 @@ export interface Account {
   avatar_static: string;
 }
 
+// Attachments
 export interface StatusAttachment {
   file: string;
   description?: string;
   focus?: { x: number; y: number };
 }
 
-export interface UploadAttachResponse{
+export interface UploadAttachResponse {
   description: string | null;
   id: string;
   pleroma: {
     mime_type: string;
-  }
+  };
   preview_url: string;
   remote_url: string | null;
   text_url: string;
-  type: "image" | "video" | "audio" | "unknown",
+  type: "image" | "video" | "audio" | "unknown";
   url: string;
 }

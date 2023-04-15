@@ -13,8 +13,10 @@ import {
   LaunchProps,
 } from "@raycast/api";
 
-import { postNewStatus, uploadAttachment } from "./api";
+import apiServer from "./api";
+
 import { AkkomaError, StatusResponse, Preference, Status } from "./types";
+
 import { authorize } from "./oauth";
 
 import VisibilityDropdown from "./components/VisibilityDropdown";
@@ -22,13 +24,11 @@ import StatusContent from "./components/StatusContent";
 
 const cache = new Cache();
 
-type SimpleStatus = Pick<Status, "content_type" | "status" | "spoiler_text" | "visibility">;
-
-interface CommandProps extends LaunchProps<{ draftValues: SimpleStatus }> {
+interface CommandProps extends LaunchProps<{ draftValues: Partial<Status> }> {
   children?: React.ReactNode;
 }
 
-interface StausForm extends Status {
+interface StatusForm extends Status {
   files: string[];
   description?: string;
 }
@@ -57,7 +57,7 @@ export default function SimpleCommand(props: CommandProps) {
     init();
   }, []);
 
-  const handleSubmit = async ({ spoiler_text, status, scheduled_at, visibility, files, description }: StausForm) => {
+  const handleSubmit = async ({ spoiler_text, status, scheduled_at, visibility, files, description }: StatusForm) => {
     try {
       if (!status) throw new Error("You might forget the content, right ? |･ω･)");
 
@@ -65,7 +65,7 @@ export default function SimpleCommand(props: CommandProps) {
 
       const mediaIds = await Promise.all(
         files?.map(async (file) => {
-          const { id} = await uploadAttachment({ file, description });
+          const { id } = await apiServer.uploadAttachment({ file, description });
           return id;
         })
       );
@@ -79,7 +79,7 @@ export default function SimpleCommand(props: CommandProps) {
         media_ids: mediaIds,
       };
 
-      const response = await postNewStatus(newStatus);
+      const response = await apiServer.postNewStatus(newStatus);
 
       setStatusInfo(response);
       cache.set("latest_published_status", JSON.stringify(response));

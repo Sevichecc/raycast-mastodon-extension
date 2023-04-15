@@ -1,6 +1,6 @@
 import { LocalStorage, OAuth, getPreferenceValues } from "@raycast/api";
 import { Preference } from "./types";
-import { fetchToken, createApp, fetchAccountInfo } from "./api";
+import apiServer from "./api";
 
 export const client = new OAuth.PKCEClient({
   redirectMethod: OAuth.RedirectMethod.Web,
@@ -10,37 +10,33 @@ export const client = new OAuth.PKCEClient({
   description: "Connect to your Akkoma / Pleroma acount",
 });
 
-const requestAccessToken = async (
+const requestToken = async (
   clientId: string,
   clientSecret: string,
-  authRequest: OAuth.AuthorizationRequest,
-  authCode: string
+  grantType: string,
+  authRequest?: OAuth.AuthorizationRequest,
+  authCode?: string,
+  refreshToken?: string
 ): Promise<OAuth.TokenResponse> => {
   const params = new URLSearchParams();
   params.append("client_id", clientId);
   params.append("client_secret", clientSecret);
-  params.append("code", authCode);
-  params.append("code_verifier", authRequest.codeVerifier);
-  params.append("grant_type", "authorization_code");
-  params.append("redirect_uri", authRequest.redirectURI);
+  params.append("grant_type", grantType);
 
-  return await fetchToken(params, "fetch tokens error:");
-};
+  if (grantType === "authorization_code") {
+    params.append("code", authCode!);
+    params.append("code_verifier", authRequest!.codeVerifier);
+    params.append("redirect_uri", authRequest!.redirectURI);
+  } else {
+    params.append("refresh_token", refreshToken!);
+  }
 
-const refreshToken = async (
-  clientId: string,
-  clientSecret: string,
-  refreshToken: string
-): Promise<OAuth.TokenResponse> => {
-  const params = new URLSearchParams();
-  params.append("client_id", clientId);
-  params.append("client_secret", clientSecret);
-  params.append("refresh_token", refreshToken);
-  params.append("grant_type", "refresh_token");
+  const tokenResponse = await apiServer.fetchToken(params, `Error while requesting ${grantType} tokens:`);
 
-  const tokenResponse = await fetchToken(params, "refresh tokens error:");
+  if (grantType === "refresh_token") {
+    tokenResponse.refresh_token = tokenResponse.refresh_token ?? refreshToken;
+  }
 
-  tokenResponse.refresh_token = tokenResponse.refresh_token ?? refreshToken;
   return tokenResponse;
 };
 
@@ -51,13 +47,15 @@ export const authorize = async (): Promise<void> => {
   if (tokenSet?.accessToken) {
     if (tokenSet.refreshToken && tokenSet.isExpired()) {
       LocalStorage.clear();
-      const { client_id, client_secret } = await createApp();
-      await client.setTokens(await refreshToken(client_id, client_secret, tokenSet.refreshToken));
+      const { client_id, client_secret } = await apiServer.createApp();
+      await client.setTokens(
+        await requestToken(client_id, client_secret, "refresh_token", undefined, undefined, tokenSet.refreshToken)
+      );
     }
     return;
   }
 
-  const { client_id, client_secret } = await createApp();
+  const { client_id, client_secret } = await apiServer.createApp();
   const authRequest = await client.authorizationRequest({
     endpoint: `https://${instance}/oauth/authorize`,
     clientId: client_id,
@@ -65,9 +63,13 @@ export const authorize = async (): Promise<void> => {
   });
 
   const { authorizationCode } = await client.authorize(authRequest);
-  await client.setTokens(await requestAccessToken(client_id, client_secret, authRequest, authorizationCode));
+  await client.setTokens(
+    await requestToken(client_id, client_secret, "authorization_code", authRequest, authorizationCode)
+  );
 
-  const { fqn, avatar_static } = await fetchAccountInfo();
+  const { fqn, avatar_static } = await apiServer.fetchAccountInfo();
   await LocalStorage.setItem("account-fqn", fqn);
   await LocalStorage.setItem("account-avator", avatar_static);
 };
+
+export default { authorize };

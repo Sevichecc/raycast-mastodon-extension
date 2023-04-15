@@ -12,11 +12,31 @@ import {
   UploadAttachResponse,
 } from "./types";
 import { client } from "./oauth";
+import { RequestInit, Response } from "node-fetch";
 
-export const fetchToken = async (params: URLSearchParams, errorMessage: string): Promise<OAuth.TokenResponse> => {
-  const { instance } = getPreferenceValues<Preference>();
+const { instance } = getPreferenceValues<Preference>();
 
-  const response = await fetch(`https://${instance}/oauth/token`, {
+const CONFIG = {
+  tokenUrl: "/oauth/token",
+  appUrl: "/api/v1/apps",
+  statusesUrl: "/api/v1/statuses",
+  verifyCredentialsUrl: "/api/v1/accounts/verify_credentials",
+  mediaUrl: "/api/v1/media/",
+};
+
+const apiUrl = (instance: string, path: string): string => `https://${instance}${path}`;
+
+const fetchWithAuth = async (url: string, options: RequestInit = {}): Promise<Response> => {
+  const tokenSet = await client.getTokens();
+  const headers = {
+    ...options.headers,
+    Authorization: `Bearer ${tokenSet?.accessToken}`,
+  };
+  return fetch(url, { ...options, headers });
+};
+
+const fetchToken = async (params: URLSearchParams, errorMessage: string): Promise<OAuth.TokenResponse> => {
+  const response = await fetch(apiUrl(instance, CONFIG.tokenUrl), {
     method: "POST",
     body: params,
   });
@@ -25,14 +45,10 @@ export const fetchToken = async (params: URLSearchParams, errorMessage: string):
   return (await response.json()) as OAuth.TokenResponse;
 };
 
-export const createApp = async (): Promise<Credentials> => {
-  const { instance } = getPreferenceValues<Preference>();
-
-  const response = await fetch(`https://${instance}/api/v1/apps`, {
+const createApp = async (): Promise<Credentials> => {
+  const response = await fetch(apiUrl(instance, CONFIG.appUrl), {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       client_name: "raycast-akkoma-extension",
       redirect_uris: "https://raycast.com/redirect?packageName=Extension",
@@ -46,77 +62,43 @@ export const createApp = async (): Promise<Credentials> => {
   return (await response.json()) as Credentials;
 };
 
-export const postNewStatus = async ({
-  status,
-  visibility,
-  spoiler_text,
-  sensitive,
-  scheduled_at,
-  content_type,
-  media_ids,
-}: Partial<Status>): Promise<StatusResponse> => {
-  const { instance } = getPreferenceValues<Preference>();
-  const tokenSet = await client.getTokens();
-
-  const response = await fetch(`https://${instance}/api/v1/statuses`, {
+const postNewStatus = async (statusOptions: Partial<Status>): Promise<StatusResponse> => {
+  const response = await fetchWithAuth(apiUrl(instance, CONFIG.statusesUrl), {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${tokenSet?.accessToken}`,
-    },
-    body: JSON.stringify({
-      status,
-      visibility,
-      spoiler_text,
-      sensitive,
-      content_type,
-      scheduled_at,
-      media_ids,
-    }),
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(statusOptions),
   });
 
-  if (!response.ok) throw new Error("Failed to pulish :(");
+  if (!response.ok) throw new Error("Failed to publish :(");
 
   return (await response.json()) as StatusResponse;
 };
 
-export const fetchAccountInfo = async (): Promise<Account> => {
-  const { instance } = getPreferenceValues<Preference>();
-  const tokenSet = await client.getTokens();
-
-  const response = await fetch(`https://${instance}/api/v1/accounts/verify_credentials`, {
+const fetchAccountInfo = async (): Promise<Account> => {
+  const response = await fetchWithAuth(apiUrl(instance, CONFIG.verifyCredentialsUrl), {
     method: "GET",
-    headers: {
-      Authorization: `Bearer ${tokenSet?.accessToken}`,
-    },
   });
 
   if (!response.ok) throw new Error("Failed to fetch account's info :(");
-
   return (await response.json()) as Account;
 };
 
-export const uploadAttachment = async ({ file, description }: StatusAttachment): Promise<UploadAttachResponse> => {
-  const { instance } = getPreferenceValues<Preference>();
-  const tokenSet = await client.getTokens();
-
+const uploadAttachment = async ({ file, description }: StatusAttachment): Promise<UploadAttachResponse> => {
   const attachment = fs.readFileSync(file);
   const attachmentData = new File([attachment], file);
   await attachmentData.arrayBuffer();
-  
+
   const formData = new FormData();
   formData.append("file", attachmentData);
   formData.append("description", description ?? "");
 
-  const response = await fetch(`https://${instance}/api/v1/media/`, {
-    method: "POST", 
-    headers: {
-      Authorization: `Bearer ${tokenSet?.accessToken}`,
-    },
+  const response = await fetchWithAuth(apiUrl(instance, CONFIG.mediaUrl), {
+    method: "POST",
     body: formData,
   });
 
-  if (!response.ok) throw new Error("Could not upload attechments");
-
+  if (!response.ok) throw new Error("Could not upload attachments");
   return (await response.json()) as UploadAttachResponse;
 };
+
+export default { fetchToken, createApp, postNewStatus, fetchAccountInfo, uploadAttachment };
