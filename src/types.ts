@@ -5,6 +5,7 @@ export type VisibilityScope = "public" | "unlisted" | "direct" | "private" | "lo
 export interface Preference {
   instance: string;
   defaultVisibility: VisibilityScope;
+  bookmarkLimit: string;
 }
 
 export interface VisibilityOption {
@@ -60,6 +61,23 @@ export interface Status {
   to?: string[];
 }
 
+export interface BookmarkedStatus {
+  created_at: Date;
+  media_attachments: UploadAttachResponse[];
+  account: {
+    acct: string;
+  };
+  url: string;
+  content: string;
+  pleroma: {
+    content: {
+      "text/plain": string;
+    };
+  };
+  id: string;
+  fqn: string;
+}
+
 // API Responses
 export interface ApiResponse {
   id: number;
@@ -90,8 +108,16 @@ export interface StatusAttachment {
 }
 
 export interface UploadAttachResponse {
+  blurhash: string;
   description: string | null;
   id: string;
+  meta: {
+    original: {
+      aspect: number;
+      height: number;
+      width: number;
+    };
+  };
   pleroma: {
     mime_type: string;
   };

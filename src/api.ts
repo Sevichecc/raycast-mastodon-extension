@@ -10,6 +10,7 @@ import {
   Account,
   StatusAttachment,
   UploadAttachResponse,
+  BookmarkedStatus,
 } from "./types";
 import { client } from "./oauth";
 import { RequestInit, Response } from "node-fetch";
@@ -22,6 +23,7 @@ const CONFIG = {
   statusesUrl: "/api/v1/statuses",
   verifyCredentialsUrl: "/api/v1/accounts/verify_credentials",
   mediaUrl: "/api/v1/media/",
+  bookmarkUrl: "/api/v1/bookmarks",
 };
 
 const apiUrl = (instance: string, path: string): string => `https://${instance}${path}`;
@@ -75,9 +77,7 @@ const postNewStatus = async (statusOptions: Partial<Status>): Promise<StatusResp
 };
 
 const fetchAccountInfo = async (): Promise<Account> => {
-  const response = await fetchWithAuth(apiUrl(instance, CONFIG.verifyCredentialsUrl), {
-    method: "GET",
-  });
+  const response = await fetchWithAuth(apiUrl(instance, CONFIG.verifyCredentialsUrl));
 
   if (!response.ok) throw new Error("Failed to fetch account's info :(");
   return (await response.json()) as Account;
@@ -101,4 +101,14 @@ const uploadAttachment = async ({ file, description }: StatusAttachment): Promis
   return (await response.json()) as UploadAttachResponse;
 };
 
-export default { fetchToken, createApp, postNewStatus, fetchAccountInfo, uploadAttachment };
+const fetchBookmarks = async (): Promise<BookmarkedStatus[]> => {
+  const { bookmarkLimit } = getPreferenceValues<Preference>();
+  const url = bookmarkLimit ? CONFIG.bookmarkUrl + `?&limit=${bookmarkLimit}` : CONFIG.bookmarkUrl;
+
+  const response = await fetchWithAuth(apiUrl(instance, url));
+  if (!response.ok) throw new Error("Could not fetch bookmarks");
+
+  return (await response.json()) as BookmarkedStatus[];
+};
+
+export default { fetchToken, createApp, postNewStatus, fetchAccountInfo, uploadAttachment, fetchBookmarks };
