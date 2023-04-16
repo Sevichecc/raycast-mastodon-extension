@@ -2,7 +2,7 @@
   "$schema": "https://www.raycast.com/schemas/extension.json",
   "name": "akkoma",
   "title": "Akkoma",
-  "description": "Send your post from Raycast to Akkoma / Pleroma",
+  "description": "Send your post from Raycast to Akkoma or Pleroma",
   "icon": "akkoma-icon.png",
   "author": "SevicheCC",
   "categories": [
@@ -60,7 +60,7 @@
       "name": "instance",
       "type": "textfield",
       "required": true,
-      "title": "Akkoma instance's URL",
+      "title": "Instance's URL",
       "description": "Your Akkoma / Pleroma  instance's URL",
       "placeholder": "such as: example.dev"
     },
