@@ -12,9 +12,9 @@ import {
   LaunchProps,
   LocalStorage,
 } from "@raycast/api";
-import apiServer from "./api";
-import { AkkomaError, StatusResponse, Preference, Status } from "./types";
-import { authorize } from "./oauth";
+import apiServer from "./utils/api";
+import { AkkomaError, StatusResponse, Preference, Status } from "./utils/types";
+import { authorize } from "./utils/oauth";
 
 import VisibilityDropdown from "./components/VisibilityDropdown";
 

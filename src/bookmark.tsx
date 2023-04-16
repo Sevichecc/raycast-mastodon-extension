@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { Action, ActionPanel, List, Toast, showToast, Cache } from "@raycast/api";
-import { BookmarkedStatus, AkkomaError } from "./types";
+import { BookmarkedStatus, AkkomaError } from "./utils/types";
 import { NodeHtmlMarkdown } from "node-html-markdown";
-import apiServer from "./api";
-import { authorize } from "./oauth";
+import apiServer from "./utils/api";
+import { authorize } from "./utils/oauth";
 
 const cache = new Cache();
 const nhm = new NodeHtmlMarkdown();
