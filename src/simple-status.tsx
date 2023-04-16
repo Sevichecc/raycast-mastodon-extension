@@ -17,7 +17,6 @@ import { AkkomaError, StatusResponse, Preference, Status } from "./types";
 import { authorize } from "./oauth";
 
 import VisibilityDropdown from "./components/VisibilityDropdown";
-import StatusContent from "./components/StatusContent";
 
 const cache = new Cache();
 
@@ -51,6 +50,7 @@ export default function SimpleCommand(props: CommandProps) {
     sensitive: false,
     openActionText: "Open the last published status",
     fqn: "",
+    content: draftValues?.status || "",
   });
 
   const cached = cache.get("latest_published_status");
@@ -143,7 +143,15 @@ export default function SimpleCommand(props: CommandProps) {
           ref={cwRef}
         />
       )}
-      <StatusContent isMarkdown={state.isMarkdown} draftStatus={draftValues?.status} />
+      <Form.TextArea
+        id="status"
+        title="Content"
+        placeholder={`Write something down ${state.isMarkdown ? "with Markdown" : ""}`}
+        enableMarkdown={state.isMarkdown}
+        autoFocus={true}
+        value={state.content}
+        onChange={(value) => setState((prevState) => ({ ...prevState, content: value }))}
+      />
       {!props.children && <VisibilityDropdown />}
       {props.children}
       <Form.Checkbox
