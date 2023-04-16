@@ -10,6 +10,7 @@ import {
   Icon,
   getPreferenceValues,
   LaunchProps,
+  LocalStorage,
 } from "@raycast/api";
 import apiServer from "./api";
 import { AkkomaError, StatusResponse, Preference, Status } from "./types";
@@ -28,15 +29,6 @@ interface StatusForm extends Status {
   files: string[];
   description?: string;
 }
-
-const init = async (cache: Cache, setFqn: (fqn: string) => void) => {
-  try {
-    await authorize(cache);
-    setFqn(cache.get("account-fqn") ?? "");
-  } catch (error) {
-    console.error("Error during authorization or fetching account-fqn:", error);
-  }
-};
 
 const labelText = (time: Date) => {
   return new Intl.DateTimeFormat("default", {
@@ -61,13 +53,25 @@ export default function SimpleCommand(props: CommandProps) {
     fqn: "",
   });
 
-  const cachedInfo = cache.get("latest_published_status");
-  const [statusInfo, setStatusInfo] = useState<StatusResponse>(cachedInfo ? JSON.parse(cachedInfo) : null);
+  const cached = cache.get("latest_published_status");
+  const [statusInfo, setStatusInfo] = useState<StatusResponse>(cached ? JSON.parse(cached) : null);
 
   const cwRef = useRef<Form.TextField>(null);
 
   useEffect(() => {
-    init(cache, (fqn) => setState((prevState) => ({ ...prevState, fqn })));
+    const init = async () => {
+      try {
+        await authorize();
+        const newFqn = (await LocalStorage.getItem<string>("account-fqn")) ?? "";
+        setState((prevState) => ({
+          ...prevState,
+          fqn: newFqn,
+        }));
+      } catch (error) {
+        console.error("Error during authorization or fetching account-fqn:", error);
+      }
+    };
+    init();
   }, []);
 
   const handleSubmit = async ({ spoiler_text, status, scheduled_at, visibility, files, description }: StatusForm) => {
