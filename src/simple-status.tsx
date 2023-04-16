@@ -73,7 +73,7 @@ export default function SimpleCommand(props: CommandProps) {
         value.files?.map(async (file) => {
           const { id } = await apiServer.uploadAttachment({ file, description: value.description });
           return id;
-        })
+        }) ?? []
       );
 
       const newStatus: Partial<StatusRequest> = {
@@ -96,7 +96,7 @@ export default function SimpleCommand(props: CommandProps) {
         cw: "",
       }));
       cache.set("latest_published_status", JSON.stringify(response));
-      setTimeout(() => popToRoot, 2000);
+      setTimeout(() => popToRoot(), 2000);
     } catch (error) {
       const requestErr = error as AkkomaError;
       showToast(Toast.Style.Failure, "Error", requestErr.message);
