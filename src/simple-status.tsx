@@ -81,9 +81,9 @@ export default function SimpleCommand(props: CommandProps) {
       if (scheduled_at) {
         showToast(Toast.Style.Success, "Scheduled", labelText(scheduled_at));
       } else {
+        showToast(Toast.Style.Success, "Status has been published (≧∇≦)/ ! ");
         cache.set("latest_published_status", JSON.stringify(response));
         setOpenActionText("View the status in Browser");
-        showToast(Toast.Style.Success, "Status has been published (≧∇≦)/ ! ");
       }
       setStatusInfo(response)
       setCw("");
