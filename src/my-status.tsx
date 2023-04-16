@@ -33,7 +33,7 @@ export default function ViewStatusCommand() {
   }, []);
 
   return (
-    <List isShowingDetail isLoading={isLoading} searchBarPlaceholder="Search bookmarks">
+    <List isShowingDetail isLoading={isLoading} searchBarPlaceholder="Search your status">
       {status?.map((statu) => (
         <List.Item
           title={statu.akkoma.source.content}
