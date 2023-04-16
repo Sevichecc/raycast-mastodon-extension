@@ -1,0 +1,19 @@
+import { Form, LaunchProps } from "@raycast/api";
+import { Status } from "./types";
+import { useState } from "react";
+
+import VisibilityDropdown from "./components/VisibilityDropdown";
+import SimpleCommand from "./simple-status";
+
+export default function DetailCommand(props: LaunchProps<{ draftValues: Partial<Status> }>) {
+  const [files, setFiles] = useState<string[]>([]);
+
+  return (
+    <SimpleCommand {...props}>
+      <Form.FilePicker id="files" value={files} onChange={setFiles} />
+      {files.length === 1 && <Form.TextArea id="description" title="Alt text" />}
+      <Form.DatePicker id="scheduled_at" title="Scheduled Time" />
+      <VisibilityDropdown />
+    </SimpleCommand>
+  );
+}

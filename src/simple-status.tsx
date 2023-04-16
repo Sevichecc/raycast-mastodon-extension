@@ -48,9 +48,8 @@ export default function SimpleCommand(props: CommandProps) {
     const init = async () => {
       authorize();
       const newFqn = await LocalStorage.getItem<string>("account-fqn");
-      if (newFqn) setFqn(newFqn);
+      newFqn ? setFqn(newFqn) : setFqn("");
     };
-
     init();
   }, []);
 
@@ -78,16 +77,18 @@ export default function SimpleCommand(props: CommandProps) {
       };
 
       const response = await apiServer.postNewStatus(newStatus);
+
       if (scheduled_at) {
         showToast(Toast.Style.Success, "Scheduled", labelText(scheduled_at));
       } else {
         showToast(Toast.Style.Success, "Status has been published (≧∇≦)/ ! ");
-        cache.set("latest_published_status", JSON.stringify(response));
-        setOpenActionText("View the status in Browser");
       }
-      setStatusInfo(response)
+
+      setStatusInfo(response);
+      setOpenActionText("View the status in Browser");
+      cache.set("latest_published_status", JSON.stringify(response));
       setCw("");
-      setTimeout(()=> popToRoot, 2000)
+      setTimeout(() => popToRoot, 2000);
     } catch (error) {
       const requestErr = error as AkkomaError;
       showToast(Toast.Style.Failure, "Error", requestErr.message);
@@ -107,9 +108,7 @@ export default function SimpleCommand(props: CommandProps) {
 
   const handleCw = (value: boolean) => {
     setSensitive(value);
-    if (cwRef.current) {
-      cwRef.current.focus();
-    }
+    cwRef.current?.focus();
   };
 
   return (
@@ -138,14 +137,7 @@ export default function SimpleCommand(props: CommandProps) {
       {!props.children && <VisibilityDropdown />}
       {props.children}
       <Form.Checkbox id="markdown" title="Markdown" label="" value={isMarkdown} onChange={setIsMarkdown} storeValue />
-      <Form.Checkbox
-        id="sensitive"
-        title="Mark as Sensitive"
-        label=""
-        value={sensitive}
-        onChange={handleCw}
-        storeValue
-      />
+      <Form.Checkbox id="sensitive" title="Sensitive" label="" value={sensitive} onChange={handleCw} storeValue />
     </Form>
   );
 }
