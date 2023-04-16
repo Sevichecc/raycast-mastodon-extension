@@ -68,7 +68,7 @@ Based on performance considerations, the number of statuses displayed is limited
 <img src="./assets/setting-visibility.png" alt="Default visibility" style="width:700px;">
 
 ## Actions 
-<img src="./assets/actions.png" alt="actions" style="width:200px;">
+<img src="./assets/actions.png" alt="actions" style="width:400px;">
 
 ## TODO
 
