@@ -67,7 +67,6 @@ export default function SimpleCommand(props: CommandProps) {
         })
       );
 
-      console.log(scheduled_at);
       const newStatus: Partial<Status> = {
         spoiler_text,
         status,
@@ -79,22 +78,31 @@ export default function SimpleCommand(props: CommandProps) {
       };
 
       const response = await apiServer.postNewStatus(newStatus);
-
-      setStatusInfo(response);
-
-      if (!scheduled_at) {
+      if (scheduled_at) {
+        showToast(Toast.Style.Success, "Scheduled", labelText(scheduled_at));
+      } else {
         cache.set("latest_published_status", JSON.stringify(response));
+        setOpenActionText("View the status in Browser");
+        showToast(Toast.Style.Success, "Status has been published (≧∇≦)/ ! ");
       }
-      
-      showToast(Toast.Style.Success, "Status has been published (≧∇≦)/ ! ");
-      setOpenActionText("Open the status in Browser");
-      setTimeout(() => {
-        popToRoot();
-      }, 1000);
+      setStatusInfo(response)
+      setCw("");
+      setTimeout(()=> popToRoot, 2000)
     } catch (error) {
       const requestErr = error as AkkomaError;
       showToast(Toast.Style.Failure, "Error", requestErr.message);
     }
+  };
+
+  const labelText = (time: Date) => {
+    return new Intl.DateTimeFormat("default", {
+      hour: "numeric",
+      minute: "numeric",
+      day: "numeric",
+      month: "long",
+      weekday: "long",
+      dayPeriod: "narrow",
+    }).format(time);
   };
 
   const handleCw = (value: boolean) => {
