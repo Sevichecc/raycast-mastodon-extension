@@ -6,7 +6,9 @@
   "icon": "akkoma-icon.png",
   "author": "SevicheCC",
   "categories": [
-    "Communication"
+    "Communication",
+    "News",
+    "Web"
   ],
   "license": "MIT",
   "commands": [
