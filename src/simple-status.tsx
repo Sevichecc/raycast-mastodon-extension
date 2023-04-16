@@ -74,23 +74,20 @@ export default function SimpleCommand(props: CommandProps) {
     init();
   }, []);
 
-  const handleSubmit = async ({ spoiler_text, status, scheduled_at, visibility, files, description }: StatusForm) => {
+  const handleSubmit = async (value: StatusForm) => {
     try {
-      if (!status && !files) throw new Error("You might forget the content, right ? |･ω･)");
+      if (!value.status && !value.files) throw new Error("You might forget the content, right ? |･ω･)");
       showToast(Toast.Style.Animated, "Publishing to the Fediverse ... ᕕ( ᐛ )ᕗ");
 
       const mediaIds = await Promise.all(
-        files?.map(async (file) => {
-          const { id } = await apiServer.uploadAttachment({ file, description });
+        value.files?.map(async (file) => {
+          const { id } = await apiServer.uploadAttachment({ file, description: value.description });
           return id;
         })
       );
 
       const newStatus: Partial<Status> = {
-        spoiler_text,
-        status,
-        scheduled_at,
-        visibility,
+        ...value,
         content_type: state.isMarkdown ? "text/markdown" : "text/plain",
         media_ids: mediaIds,
         sensitive: state.sensitive,
@@ -98,11 +95,9 @@ export default function SimpleCommand(props: CommandProps) {
 
       const response = await apiServer.postNewStatus(newStatus);
 
-      if (scheduled_at) {
-        showToast(Toast.Style.Success, "Scheduled", labelText(scheduled_at));
-      } else {
-        showToast(Toast.Style.Success, "Status has been published (≧∇≦)/ ! ");
-      }
+      value.scheduled_at
+        ? showToast(Toast.Style.Success, "Scheduled", labelText(value.scheduled_at))
+        : showToast(Toast.Style.Success, "Status has been published (≧∇≦)/ ! ");
 
       setStatusInfo(response);
       setState((prevState) => ({
