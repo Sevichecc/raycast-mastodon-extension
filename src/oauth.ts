@@ -1,4 +1,4 @@
-import { LocalStorage, OAuth, getPreferenceValues,Cache } from "@raycast/api";
+import { LocalStorage, OAuth, getPreferenceValues } from "@raycast/api";
 import { Preference } from "./types";
 import apiServer from "./api";
 

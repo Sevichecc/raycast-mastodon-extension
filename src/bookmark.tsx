@@ -3,8 +3,16 @@ import { Action, ActionPanel, List, Toast, showToast, Cache } from "@raycast/api
 import { BookmarkedStatus, AkkomaError } from "./types";
 import { NodeHtmlMarkdown } from "node-html-markdown";
 import apiServer from "./api";
+import { authorize } from "./oauth";
 
 const cache = new Cache();
+const nhm = new NodeHtmlMarkdown();
+const dateTimeFormatter = new Intl.DateTimeFormat("default", {
+  hour: "numeric",
+  minute: "numeric",
+  day: "numeric",
+  month: "long",
+});
 
 export default function BookmarkCommand() {
   const cached = cache.get("latest_bookmarks");
@@ -14,7 +22,8 @@ export default function BookmarkCommand() {
   useEffect(() => {
     const getBookmark = async () => {
       try {
-        showToast(Toast.Style.Animated, "Loaing bookmarks...");
+        await authorize();
+        showToast(Toast.Style.Animated, "Loading bookmarks...");
         const newBookmarks = await apiServer.fetchBookmarks();
         setBookmarks(newBookmarks);
         cache.set("latest_bookmarks", JSON.stringify(newBookmarks));
@@ -30,20 +39,13 @@ export default function BookmarkCommand() {
   }, []);
 
   const parseStatus = ({ content, media_attachments, account, created_at }: BookmarkedStatus) => {
-    const nhm = new NodeHtmlMarkdown();
-
     const images = media_attachments.filter((attachment) => attachment.type === "image");
     const parsedImages = images.reduce((link, image) => link + `![${image.description}](${image.remote_url})`, "");
 
     const date = new Date(created_at);
-    const parseTime = new Intl.DateTimeFormat("default", {
-      hour: "numeric",
-      minute: "numeric",
-      day: "numeric",
-      month: "long",
-    }).format(date);
+    const parsedTime = dateTimeFormatter.format(date);
 
-    return ` _@${account.acct} (${parseTime})_ ` + nhm.translate("<br>" + content) + parsedImages;
+    return ` _@${account.acct} (${parsedTime})_ ` + nhm.translate("<br>" + content) + parsedImages;
   };
 
   return (
