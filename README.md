@@ -71,6 +71,4 @@ Based on performance considerations, the number of statuses displayed is limited
 <img src="./assets/actions.png" alt="actions" style="width:400px;">
 
 ## TODO
-
-- [ ] Bubble Visibility
 - [ ] Fork to Mastodon
