@@ -13,35 +13,25 @@ import {
   LocalStorage,
 } from "@raycast/api";
 import apiServer from "./utils/api";
-import { AkkomaError, StatusResponse, Preference, Status } from "./utils/types";
+import { AkkomaError, StatusResponse, Preference, StatusRequest } from "./utils/types";
 import { authorize } from "./utils/oauth";
+import { dateTimeFormatter } from "./utils/util";
 
 import VisibilityDropdown from "./components/VisibilityDropdown";
 
 const cache = new Cache();
+const { instance } = getPreferenceValues<Preference>();
 
-interface CommandProps extends LaunchProps<{ draftValues: Partial<Status> }> {
+interface CommandProps extends LaunchProps<{ draftValues: Partial<StatusRequest> }> {
   children?: React.ReactNode;
 }
 
-interface StatusForm extends Status {
+interface StatusForm extends StatusRequest {
   files: string[];
   description?: string;
 }
 
-const labelText = (time: Date) => {
-  return new Intl.DateTimeFormat("default", {
-    hour: "numeric",
-    minute: "numeric",
-    day: "numeric",
-    month: "long",
-    weekday: "long",
-    dayPeriod: "narrow",
-  }).format(time);
-};
-
 export default function SimpleCommand(props: CommandProps) {
-  const { instance } = getPreferenceValues<Preference>();
   const { draftValues } = props;
 
   const [state, setState] = useState({
@@ -86,7 +76,7 @@ export default function SimpleCommand(props: CommandProps) {
         })
       );
 
-      const newStatus: Partial<Status> = {
+      const newStatus: Partial<StatusRequest> = {
         ...value,
         content_type: state.isMarkdown ? "text/markdown" : "text/plain",
         media_ids: mediaIds,
@@ -96,7 +86,7 @@ export default function SimpleCommand(props: CommandProps) {
       const response = await apiServer.postNewStatus(newStatus);
 
       value.scheduled_at
-        ? showToast(Toast.Style.Success, "Scheduled", labelText(value.scheduled_at))
+        ? showToast(Toast.Style.Success, "Scheduled", dateTimeFormatter(value.scheduled_at, "long"))
         : showToast(Toast.Style.Success, "Status has been published (≧∇≦)/ ! ");
 
       setStatusInfo(response);

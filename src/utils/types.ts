@@ -44,7 +44,7 @@ interface Poll {
   options: string[];
 }
 
-export interface Status {
+export interface StatusRequest {
   spoiler_text?: string;
   status: string;
   content_type: string;
@@ -61,7 +61,7 @@ export interface Status {
   to?: string[];
 }
 
-export interface BookmarkedStatus {
+export interface Status {
   created_at: Date;
   media_attachments: UploadAttachResponse[];
   account: {
@@ -98,6 +98,7 @@ export interface Account {
   display_name: string;
   fqn: string;
   avatar_static: string;
+  id: string;
 }
 
 // Attachments

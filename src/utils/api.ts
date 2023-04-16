@@ -5,12 +5,12 @@ import { OAuth, getPreferenceValues } from "@raycast/api";
 import {
   Credentials,
   Preference,
-  Status,
+  StatusRequest,
   StatusResponse,
   Account,
   StatusAttachment,
   UploadAttachResponse,
-  BookmarkedStatus,
+  Status,
 } from "./types";
 import { client } from "./oauth";
 import { RequestInit, Response } from "node-fetch";
@@ -21,6 +21,7 @@ const CONFIG = {
   tokenUrl: "/oauth/token",
   appUrl: "/api/v1/apps",
   statusesUrl: "/api/v1/statuses",
+  accountsUrl: "/api/v1/accounts",
   verifyCredentialsUrl: "/api/v1/accounts/verify_credentials",
   mediaUrl: "/api/v1/media/",
   bookmarkUrl: "/api/v1/bookmarks",
@@ -64,7 +65,7 @@ const createApp = async (): Promise<Credentials> => {
   return (await response.json()) as Credentials;
 };
 
-const postNewStatus = async (statusOptions: Partial<Status>): Promise<StatusResponse> => {
+const postNewStatus = async (statusOptions: Partial<StatusRequest>): Promise<StatusResponse> => {
   const response = await fetchWithAuth(apiUrl(instance, CONFIG.statusesUrl), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -101,14 +102,32 @@ const uploadAttachment = async ({ file, description }: StatusAttachment): Promis
   return (await response.json()) as UploadAttachResponse;
 };
 
-const fetchBookmarks = async (): Promise<BookmarkedStatus[]> => {
+const fetchBookmarks = async (): Promise<Status[]> => {
   const { bookmarkLimit } = getPreferenceValues<Preference>();
   const url = bookmarkLimit ? CONFIG.bookmarkUrl + `?&limit=${bookmarkLimit}` : CONFIG.bookmarkUrl;
 
   const response = await fetchWithAuth(apiUrl(instance, url));
   if (!response.ok) throw new Error("Could not fetch bookmarks");
 
-  return (await response.json()) as BookmarkedStatus[];
+  return (await response.json()) as Status[];
 };
 
-export default { fetchToken, createApp, postNewStatus, fetchAccountInfo, uploadAttachment, fetchBookmarks };
+const fetchUserStatus = async (): Promise<Status[]> => {
+  const { id } = await fetchAccountInfo();
+  const url = CONFIG.accountsUrl + id + "/statuses?exclude_replies=false&with_muted=true";
+
+  const response = await fetchWithAuth(apiUrl(instance, url));
+  if (!response.ok) throw new Error("Could not fetch user's status");
+
+  return (await response.json()) as Status[];
+};
+
+export default {
+  fetchToken,
+  createApp,
+  postNewStatus,
+  fetchAccountInfo,
+  uploadAttachment,
+  fetchBookmarks,
+  fetchUserStatus,
+};

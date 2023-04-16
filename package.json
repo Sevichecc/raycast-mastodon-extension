@@ -37,6 +37,22 @@
           "placeholder": "default value : 20"
         }
       ]
+    },
+    {
+      "name": "my-status",
+      "title": "View My Status",
+      "description": "View your statuses",
+      "mode": "view",
+      "preferences": [
+        {
+          "name": "statusLimit",
+          "type": "textfield",
+          "required": false,
+          "title": "Maximum number of statuses",
+          "description": "Maximum number of statuses to be show",
+          "placeholder": "default value : 20"
+        }
+      ]
     }
   ],
   "preferences": [

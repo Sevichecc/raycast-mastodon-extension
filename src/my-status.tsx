@@ -1,27 +1,27 @@
 import { useEffect, useState } from "react";
 import { Action, ActionPanel, List, Toast, showToast, Cache } from "@raycast/api";
-
 import { Status, AkkomaError } from "./utils/types";
-import apiServer from "./utils/api";
+
 import { authorize } from "./utils/oauth";
+import apiServer from "./utils/api";
 import { statusParser } from "./utils/util";
 
 const cache = new Cache();
 
-export default function BookmarkCommand() {
-  const cached = cache.get("latest_bookmarks");
-  const [bookmarks, setBookmarks] = useState<Status[]>(cached ? JSON.parse(cached) : []);
+export default function ViewStatusCommand() {
+  const cached = cache.get("latest_statuses");
+  const [status, setStatus] = useState<Status[]>(cached ? JSON.parse(cached) : []);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const getBookmark = async () => {
       try {
         await authorize();
-        showToast(Toast.Style.Animated, "Loading bookmarks...");
-        const newBookmarks = await apiServer.fetchBookmarks();
-       setBookmarks((prevBookmarks) => [...prevBookmarks, ...newBookmarks]);
-        showToast(Toast.Style.Success, "Bookmarked has been loaded");
-        cache.set("latest_bookmarks", JSON.stringify(newBookmarks));
+        showToast(Toast.Style.Animated, "Loading Status...");
+        const status = await apiServer.fetchUserStatus();
+        setStatus(status);
+        showToast(Toast.Style.Success, "Statuses has been loaded");
+        cache.set("latest_statuses", JSON.stringify(status));
       } catch (error) {
         const requestErr = error as AkkomaError;
         showToast(Toast.Style.Failure, "Error", requestErr.message);
@@ -34,14 +34,14 @@ export default function BookmarkCommand() {
 
   return (
     <List isShowingDetail isLoading={isLoading} searchBarPlaceholder="Search bookmarks">
-      {bookmarks?.map((bookmark) => (
+      {status?.map((statu) => (
         <List.Item
-          title={bookmark.pleroma.content["text/plain"]}
-          key={bookmark.id}
-          detail={<List.Item.Detail markdown={statusParser(bookmark)} />}
+          title={statu.pleroma.content["text/plain"]}
+          key={statu.id}
+          detail={<List.Item.Detail markdown={statusParser(statu)} />}
           actions={
             <ActionPanel>
-              <Action.OpenInBrowser title="Open Original Status" url={bookmark.url} />
+              <Action.OpenInBrowser title="Open Original Status" url={statu.url} />
             </ActionPanel>
           }
         />
