@@ -1,4 +1,4 @@
-import { LocalStorage, OAuth, getPreferenceValues } from "@raycast/api";
+import { LocalStorage, OAuth, getPreferenceValues,Cache } from "@raycast/api";
 import { Preference } from "./types";
 import apiServer from "./api";
 
@@ -44,13 +44,12 @@ const refreshToken = async (
   return tokenResponse;
 };
 
-export const authorize = async (): Promise<void> => {
+export const authorize = async (cache: Cache): Promise<void> => {
   const { instance } = getPreferenceValues<Preference>();
   const tokenSet = await client.getTokens();
 
   if (tokenSet?.accessToken) {
     if (tokenSet.refreshToken && tokenSet.isExpired()) {
-      LocalStorage.clear();
       const { client_id, client_secret } = await apiServer.createApp();
       await client.setTokens(await refreshToken(client_id, client_secret, tokenSet.refreshToken));
     }
@@ -67,7 +66,6 @@ export const authorize = async (): Promise<void> => {
   const { authorizationCode } = await client.authorize(authRequest);
   await client.setTokens(await requestAccessToken(client_id, client_secret, authRequest, authorizationCode));
 
-  const { fqn, avatar_static } = await apiServer.fetchAccountInfo();
-  await LocalStorage.setItem("account-fqn", fqn);
-  await LocalStorage.setItem("account-avator", avatar_static);
+  const { fqn  } = await apiServer.fetchAccountInfo();
+  cache.set("account-fqn", fqn);
 };
