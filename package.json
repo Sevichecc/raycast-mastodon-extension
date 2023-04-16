@@ -12,14 +12,14 @@
   "commands": [
     {
       "name": "simple-status",
-      "title": "Simple post",
-      "description": "Publish simple text status with text",
+      "title": "Add Simple Status",
+      "description": "Publish simple text status",
       "mode": "view"
     },
     {
-      "name": "detail-status",
-      "title": "Publish with image or files",
-      "description": "Publish status with image or files",
+      "name": "status",
+      "title": "Add Status",
+      "description": "Publish status with attenchments, or scheduled status",
       "mode": "view"
     }
   ],
