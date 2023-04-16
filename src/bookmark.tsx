@@ -26,8 +26,8 @@ export default function BookmarkCommand() {
         showToast(Toast.Style.Animated, "Loading bookmarks...");
         const newBookmarks = await apiServer.fetchBookmarks();
         setBookmarks(newBookmarks);
-        cache.set("latest_bookmarks", JSON.stringify(newBookmarks));
         showToast(Toast.Style.Success, "Bookmarked has been loaded");
+        cache.set("latest_bookmarks", JSON.stringify(newBookmarks));
       } catch (error) {
         const requestErr = error as AkkomaError;
         showToast(Toast.Style.Failure, "Error", requestErr.message);
