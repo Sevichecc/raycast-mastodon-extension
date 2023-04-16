@@ -34,14 +34,14 @@ export default function ViewStatusCommand() {
 
   return (
     <List isShowingDetail isLoading={isLoading} searchBarPlaceholder="Search your status">
-      {status?.map((statu) => (
+      {status?.map((status) => (
         <List.Item
-          title={statu.akkoma.source.content}
-          key={statu.id}
-          detail={<List.Item.Detail markdown={statusParser(statu, "date")} />}
+          title={status.akkoma.source.content}
+          key={status.id}
+          detail={<List.Item.Detail markdown={statusParser(status, "date")} />}
           actions={
             <ActionPanel>
-              <Action.OpenInBrowser title="Open Original Status" url={statu.url} />
+              <Action.OpenInBrowser title="Open Original Status" url={status.url} />
             </ActionPanel>
           }
         />
