@@ -29,6 +29,7 @@ Input your Akkoma / Pleroma instance's URL, then click the "Continue" button in 
 <img src="./assets/add-simple-status.png" alt="Add simple status with text" style="width:700px;">
 
 ### Add scheduled status
+<img src="./assets/add-status.png" alt="Add scheduled status" style="width:700px;">
 
 <img src="./assets/add-scheduled-status.png" alt="Add scheduled status" style="width:700px;">
 
@@ -47,13 +48,16 @@ Input your Akkoma / Pleroma instance's URL, then click the "Continue" button in 
 ### Mark status as sensitive 
 Toggle the "Sensitive" checkbox to mark the attached image as sensitive, or add a content warning to the status.
 
-<img src="./assets/add-cw.png" alt="View your latest status" style="width:700px;">
+<img src="./assets/add-cw.png" alt="Mark status as sensitive " style="width:700px;">
 
 ### Write status with markdown
 Toggle the "Markdown" checkbox to render markdown in the text file. Markdown shortcuts are also supported (e.g., pressing `⌘` + `B` will add `**bold**` around the selected text, `⌘` + `I` will make the selected text italic, etc.).
 
 <img src="./assets/markdown.png" alt="Writing status with markdown" style="width:700px;">
 
+### Draft status 
+
+<img src="./assets/draft-status.png" alt="Draft status" style="width:700px;">
 ## Available Settings
 
 ### Status limit
