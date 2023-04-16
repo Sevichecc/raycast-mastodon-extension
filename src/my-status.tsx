@@ -36,9 +36,9 @@ export default function ViewStatusCommand() {
     <List isShowingDetail isLoading={isLoading} searchBarPlaceholder="Search bookmarks">
       {status?.map((statu) => (
         <List.Item
-          title={statu.pleroma.content["text/plain"]}
+          title={statu.akkoma.source.content}
           key={statu.id}
-          detail={<List.Item.Detail markdown={statusParser(statu)} />}
+          detail={<List.Item.Detail markdown={statusParser(statu, "date")} />}
           actions={
             <ActionPanel>
               <Action.OpenInBrowser title="Open Original Status" url={statu.url} />

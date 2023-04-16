@@ -21,7 +21,7 @@ const CONFIG = {
   tokenUrl: "/oauth/token",
   appUrl: "/api/v1/apps",
   statusesUrl: "/api/v1/statuses",
-  accountsUrl: "/api/v1/accounts",
+  accountsUrl: "/api/v1/accounts/",
   verifyCredentialsUrl: "/api/v1/accounts/verify_credentials",
   mediaUrl: "/api/v1/media/",
   bookmarkUrl: "/api/v1/bookmarks",

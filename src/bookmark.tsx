@@ -19,7 +19,7 @@ export default function BookmarkCommand() {
         await authorize();
         showToast(Toast.Style.Animated, "Loading bookmarks...");
         const newBookmarks = await apiServer.fetchBookmarks();
-       setBookmarks((prevBookmarks) => [...prevBookmarks, ...newBookmarks]);
+        setBookmarks((prevBookmarks) => [...prevBookmarks, ...newBookmarks]);
         showToast(Toast.Style.Success, "Bookmarked has been loaded");
         cache.set("latest_bookmarks", JSON.stringify(newBookmarks));
       } catch (error) {
@@ -36,9 +36,9 @@ export default function BookmarkCommand() {
     <List isShowingDetail isLoading={isLoading} searchBarPlaceholder="Search bookmarks">
       {bookmarks?.map((bookmark) => (
         <List.Item
-          title={bookmark.pleroma.content["text/plain"]}
+          title={bookmark.pleroma.content["text/plain"] || bookmark.akkoma.source.content}
           key={bookmark.id}
-          detail={<List.Item.Detail markdown={statusParser(bookmark)} />}
+          detail={<List.Item.Detail markdown={statusParser(bookmark, "idAndDate")} />}
           actions={
             <ActionPanel>
               <Action.OpenInBrowser title="Open Original Status" url={bookmark.url} />

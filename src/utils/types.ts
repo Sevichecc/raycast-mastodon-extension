@@ -64,6 +64,12 @@ export interface StatusRequest {
 export interface Status {
   created_at: Date;
   media_attachments: UploadAttachResponse[];
+  akkoma: {
+    source: {
+      content: string;
+      mediaType: "text/markdown" | "text/plain" | "text/bbcode" | "text/html" | "x.misskeymarkdown";
+    };
+  };
   account: {
     acct: string;
   };
