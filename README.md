@@ -1,6 +1,6 @@
 # Raycast Extension for Akkoma
 
-<img src="./assets/command.png" alt="commands of this plugin" style="width:500px;">
+![overview](./assets/command.png)
 
  
 -  [Akkoma](https://akkoma.social/) 
@@ -20,52 +20,52 @@
 
 Input your Akkoma / Pleroma instance's URL, then click the "Continue" button in the bottom-right corner.
 
-<img src="./assets/login.png" alt="login" style="width:500px;">
+<img src="./assets/login.png" alt="login" style="width:700px;">
 
 ## Examples:
 
 ### Add simple status with text
 
-<img src="./assets/add-simple-status.png" alt="Add simple status with text" style="width:500px;">
+<img src="./assets/add-simple-status.png" alt="Add simple status with text" style="width:700px;">
 
 ### Add scheduled status
 
-<img src="./assets/add-scheduled-status.png" alt="Add scheduled status" style="width:500px;">
+<img src="./assets/add-scheduled-status.png" alt="Add scheduled status" style="width:700px;">
 
 ### Add status with image and alt text
 
-<img src="./assets/add-status-alt-text.png" alt="Add status with image and alt text" style="width:500px;">
+<img src="./assets/add-status-alt-text.png" alt="Add status with image and alt text" style="width:700px;">
 
 ### View bookmarked status 
 
-<img src="./assets/view-bookmarks.png" alt="Add simple status with text" style="width:500px;">
+<img src="./assets/view-bookmarks.png" alt="Add simple status with text" style="width:700px;">
 
 ### View your latest status
 
-<img src="./assets/view-my-status.png" alt="View your latest status" style="width:500px;">
+<img src="./assets/view-my-status.png" alt="View your latest status" style="width:700px;">
 
 ### Mark status as sensitive 
 Toggle the "Sensitive" checkbox to mark the attached image as sensitive, or add a content warning to the status.
 
-<img src="./assets/add-cw.png" alt="View your latest status" style="width:500px;">
+<img src="./assets/add-cw.png" alt="View your latest status" style="width:700px;">
 
 ### Write status with markdown
 Toggle the "Markdown" checkbox to render markdown in the text file. Markdown shortcuts are also supported (e.g., pressing `⌘` + `B` will add `**bold**` around the selected text, `⌘` + `I` will make the selected text italic, etc.).
 
-<img src="./assets/markdown.png" alt="Writing status with markdown" style="width:500px;">
+<img src="./assets/markdown.png" alt="Writing status with markdown" style="width:700px;">
 
 ## Available Settings
 
 ### Status limit
 Based on performance considerations, the number of statuses displayed is limited, with the default being 20. You can adjust this limit in the extension settings.
 
-<img src="./assets/setting-bookmarks.png" alt="bookmark limit" style="width:500px;">
+<img src="./assets/setting-bookmarks.png" alt="bookmark limit" style="width:700px;">
 
-<img src="./assets/setting-status.png" alt="status limit" style="width:500px;">
+<img src="./assets/setting-status.png" alt="status limit" style="width:700px;">
 
 ### Default visibility
 
-<img src="./assets/setting-visibility.png" alt="Default visibility" style="width:500px;">
+<img src="./assets/setting-visibility.png" alt="Default visibility" style="width:700px;">
 
 ## Actions 
 <img src="./assets/actions.png" alt="actions" style="width:200px;">
