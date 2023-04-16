@@ -74,6 +74,7 @@ export interface Status {
     acct: string;
   };
   url: string;
+  uri: string;
   content: string;
   pleroma: {
     content: {

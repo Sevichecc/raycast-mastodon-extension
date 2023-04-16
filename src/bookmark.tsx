@@ -37,7 +37,7 @@ export default function BookmarkCommand() {
       {bookmarks?.map((bookmark) => (
         <List.Item
           title={bookmark.pleroma.content["text/plain"] || bookmark.akkoma.source.content}
-          key={bookmark.id}
+          key={bookmark.uri}
           detail={<List.Item.Detail markdown={statusParser(bookmark, "idAndDate")} />}
           actions={
             <ActionPanel>
