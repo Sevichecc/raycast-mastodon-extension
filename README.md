@@ -4,7 +4,7 @@
 
  
 -  [Akkoma](https://akkoma.social/) 
- -  [Raycast](https://raycast.com)
+-  [Raycast](https://raycast.com)
 
 **Features**:
 - Write status with markdown support.

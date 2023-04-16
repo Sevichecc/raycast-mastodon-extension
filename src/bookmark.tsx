@@ -17,10 +17,10 @@ export default function BookmarkCommand() {
     const getBookmark = async () => {
       try {
         await authorize();
-        showToast(Toast.Style.Animated, "Loading bookmarks...");
+        showToast(Toast.Style.Animated, "Loading bookmarks..☆ﾐ(o*･ω･)ﾉ.");
         const newBookmarks = await apiServer.fetchBookmarks();
         setBookmarks((prevBookmarks) => [...prevBookmarks, ...newBookmarks]);
-        showToast(Toast.Style.Success, "Bookmarked has been loaded");
+        showToast(Toast.Style.Success, "Bookmarked has been loaded ＼(^o^)／");
         cache.set("latest_bookmarks", JSON.stringify(newBookmarks));
       } catch (error) {
         const requestErr = error as AkkomaError;
