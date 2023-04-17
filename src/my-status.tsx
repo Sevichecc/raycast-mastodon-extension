@@ -32,7 +32,7 @@ export default function ViewStatusCommand() {
     getBookmark();
   }, []);
 
-  const filterReblog = (statuses:Status[]) =>  statuses.filter((status)=>!status.reblog)
+  const filterReblog = (statuses: Status[]) => statuses.filter((status) => !status.reblog);
 
   return (
     <List isShowingDetail isLoading={isLoading} searchBarPlaceholder="Search your status">
