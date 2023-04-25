@@ -95,10 +95,6 @@
         {
           "title": "✉️ Direct",
           "value": "direct"
-        },
-        {
-          "title": "📍 Local-only",
-          "value": "local"
         }
       ]
     }

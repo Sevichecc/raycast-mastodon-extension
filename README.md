@@ -19,7 +19,7 @@
 
 Input your Mastodon instance's URL, then click the "Continue" button in the bottom-right corner.
 
-![](./media/settings.png)
+![](./metadata/mastodon-1.png)
 
 ## Examples:
 
@@ -55,16 +55,14 @@ Toggle the "Markdown" checkbox to render markdown in the text file. Markdown sho
 
 ## Available Settings
 
+![](./media/settings.png)
+
+If the instance supports Markdown, please select the `Built-in Markdown Support` checkbox. 
+
 ### Status limit
 Based on performance considerations, the number of statuses displayed is limited, with the default being 20. You can adjust this limit in the extension settings.
 
 ![](media/setting-status.png)
-
-### Default visibility
-
-![](media/settings.png)
-
-If the instance supports Markdown, please select the `Built-in Markdown Support` checkbox. 
 
 ## Actions 
 ![](media/actions.png)
