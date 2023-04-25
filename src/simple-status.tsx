@@ -20,7 +20,7 @@ import { dateTimeFormatter } from "./utils/util";
 import VisibilityDropdown from "./components/VisibilityDropdown";
 
 const cache = new Cache();
-const { instance } = getPreferenceValues<Preference>();
+const { instance, enableMarkdown } = getPreferenceValues<Preference>();
 
 interface CommandProps extends LaunchProps<{ draftValues: Partial<StatusRequest> }> {
   children?: React.ReactNode;
@@ -36,6 +36,7 @@ export default function SimpleCommand(props: CommandProps) {
 
   const [state, setState] = useState({
     cw: draftValues?.spoiler_text || "",
+    isMarkdown: enableMarkdown,
     sensitive: false,
     openActionText: "Open the last published status",
     username: "",
@@ -51,13 +52,13 @@ export default function SimpleCommand(props: CommandProps) {
     const init = async () => {
       try {
         await getAccessToken();
-        const displayName = (await LocalStorage.getItem<string>("account-username")) || "";
+        const username = (await LocalStorage.getItem<string>("account-username")) || "";
         setState((prevState) => ({
           ...prevState,
-          displayName,
+          username,
         }));
       } catch (error) {
-        console.error("Error during authorization or fetching account-fqn:", error);
+        console.error("Error during authorization or fetching account-username:", error);
       }
     };
     init();
@@ -66,6 +67,7 @@ export default function SimpleCommand(props: CommandProps) {
   const handleSubmit = async (value: StatusForm) => {
     try {
       if (!value.status && !value.files) throw new Error("You might forget the content, right ? ");
+
       showToast(Toast.Style.Animated, "Publishing to the Fediverse ...");
 
       const mediaIds = await Promise.all(
@@ -79,6 +81,7 @@ export default function SimpleCommand(props: CommandProps) {
         ...value,
         media_ids: mediaIds,
         sensitive: state.sensitive,
+        content_type: enableMarkdown ? "text/markdown" : "text/plain",
       };
 
       const response = await apiServer.postNewStatus(newStatus);
@@ -97,7 +100,7 @@ export default function SimpleCommand(props: CommandProps) {
       setTimeout(() => popToRoot(), 2000);
     } catch (error) {
       const requestErr = error as MastodonError;
-      showToast(Toast.Style.Failure, "Error", requestErr.error);
+      showToast(Toast.Style.Failure, "Error", requestErr.error || (error as Error).message);
     }
   };
 
@@ -134,13 +137,23 @@ export default function SimpleCommand(props: CommandProps) {
       <Form.TextArea
         id="status"
         title="Content"
-        placeholder={'Write something down...'}
+        placeholder={`Write something down ${state.isMarkdown ? "with Markdown" : ""}`}
         autoFocus={true}
         value={state.content}
         onChange={(value) => setState((prevState) => ({ ...prevState, content: value }))}
+        enableMarkdown={state.isMarkdown}
       />
       {!props.children && <VisibilityDropdown />}
       {props.children}
+      {enableMarkdown && (
+        <Form.Checkbox
+          id="markdown"
+          label="Markdown"
+          value={state.isMarkdown}
+          onChange={(value) => setState((prevState) => ({ ...prevState, isMarkdown: value }))}
+          storeValue
+        />
+      )}
       <Form.Checkbox id="sensitive" label="Sensitive" value={state.sensitive} onChange={handleCw} storeValue />
     </Form>
   );

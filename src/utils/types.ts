@@ -6,6 +6,7 @@ export interface Preference {
   instance: string;
   defaultVisibility: VisibilityScope;
   bookmarkLimit: string;
+  enableMarkdown: boolean;
 }
 
 export interface VisibilityOption {
@@ -35,7 +36,6 @@ export interface Credentials {
   vapid_key: string;
 }
 
-
 export interface StatusRequest {
   status: string;
   media_ids?: string[];
@@ -46,6 +46,7 @@ export interface StatusRequest {
   visibility: VisibilityScope;
   language?: string;
   scheduled_at?: Date;
+  content_type?: "text/markdown" | "text/plain" | "text/html" ;
 }
 
 export interface Status {
@@ -54,8 +55,8 @@ export interface Status {
   url: string;
   uri: string;
   application: {
-    name: string
-    website: string,
+    name: string;
+    website: string;
   };
   account: Account;
   content: string;
@@ -63,8 +64,7 @@ export interface Status {
     id: string;
     reblogged: boolean;
   };
-  media_attachments: UploadAttachResponse[],
-  
+  media_attachments: UploadAttachResponse[];
 }
 
 // API Responses
