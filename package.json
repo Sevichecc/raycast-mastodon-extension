@@ -1,9 +1,9 @@
 {
   "$schema": "https://www.raycast.com/schemas/extension.json",
-  "name": "akkoma",
-  "title": "Akkoma",
-  "description": "Publish status from Raycast to Akkoma or Pleroma, and view your bookmarked status",
-  "icon": "akkoma-icon.png",
+  "name": "mastodon",
+  "title": "Mastodon",
+  "description": "Publish status from Raycast to Mastodon, and view your bookmarked status",
+  "icon": "mastodon-icon.png",
   "author": "SevicheCC",
   "categories": [
     "Communication",
@@ -63,8 +63,8 @@
       "type": "textfield",
       "required": true,
       "title": "Instance's URL",
-      "description": "Your Akkoma / Pleroma  instance's URL",
-      "placeholder": "such as: example.dev"
+      "description": "Your Mastodon  instance's URL",
+      "placeholder": "such as: mastodon.social"
     },
     {
       "name": "defaultVisibility",

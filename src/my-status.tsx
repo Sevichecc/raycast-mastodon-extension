@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Action, ActionPanel, List, Toast, showToast, Cache } from "@raycast/api";
-import { Status, AkkomaError } from "./utils/types";
+import { Status, MastodonError } from "./utils/types";
 
 import { getAccessToken } from "./utils/oauth";
 import apiServer from "./utils/api";
@@ -17,14 +17,14 @@ export default function ViewStatusCommand() {
     const getBookmark = async () => {
       try {
         await getAccessToken();
-        showToast(Toast.Style.Animated, "Loading Status...ε=ε=┌( >_<)┘");
+        showToast(Toast.Style.Animated, "Loading Status...");
         const status = await apiServer.fetchUserStatus();
         setStatuses(statuses);
-        showToast(Toast.Style.Success, "Statuses has been loaded ٩(•̤̀ᵕ•̤́๑)ᵒᵏᵎᵎᵎᵎ");
+        showToast(Toast.Style.Success, "Statuses has been loaded");
         cache.set("latest_statuses", JSON.stringify(status));
       } catch (error) {
-        const requestErr = error as AkkomaError;
-        showToast(Toast.Style.Failure, "Error", requestErr.message);
+        const requestErr = error as MastodonError;
+        showToast(Toast.Style.Failure, "Error", requestErr.error);
       } finally {
         setIsLoading(false);
       }
@@ -38,7 +38,9 @@ export default function ViewStatusCommand() {
     <List isShowingDetail isLoading={isLoading} searchBarPlaceholder="Search your status">
       {filterReblog(statuses)?.map((status) => (
         <List.Item
-          title={status.akkoma.source.content}
+          title={
+            status.content.replace(/<.*?>/g, "")
+          }
           key={status.id}
           detail={<List.Item.Detail markdown={statusParser(status, "date")} />}
           actions={

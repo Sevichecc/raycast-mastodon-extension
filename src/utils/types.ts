@@ -1,6 +1,6 @@
 import type { Icon } from "@raycast/api";
 
-export type VisibilityScope = "public" | "unlisted" | "direct" | "private" | "local";
+export type VisibilityScope = "public" | "unlisted" | "direct" | "private";
 
 export interface Preference {
   instance: string;
@@ -15,9 +15,8 @@ export interface VisibilityOption {
 }
 
 // Error
-export interface AkkomaError {
-  code: string;
-  message: string;
+export interface MastodonError {
+  error: string;
 }
 
 // Application and Credentials
@@ -36,60 +35,38 @@ export interface Credentials {
   vapid_key: string;
 }
 
-// Statuses
-interface Poll {
-  expired_in: number;
-  hide_totals?: boolean | string;
-  multiple?: boolean | string | number;
-  options: string[];
-}
 
 export interface StatusRequest {
-  spoiler_text?: string;
   status: string;
-  content_type: string;
-  visibility: VisibilityScope;
-  expires_in?: number;
+  media_ids?: string[];
   in_reply_to_conversation_id?: string;
   in_reply_to_id?: string;
+  sensitive?: boolean;
+  spoiler_text?: string;
+  visibility: VisibilityScope;
   language?: string;
-  media_ids?: string[];
-  poll?: Poll;
-  preview?: boolean | string | number;
   scheduled_at?: Date;
-  sensitive?: string | boolean | number;
-  to?: string[];
 }
 
 export interface Status {
+  id: string;
   created_at: Date;
-  media_attachments: UploadAttachResponse[];
-  akkoma: AkkomaSource;
-  account: {
-    acct: string;
-  };
   url: string;
   uri: string;
+  application: {
+    name: string
+    website: string,
+  };
+  account: Account;
   content: string;
-  pleroma: {
-    content: {
-      "text/plain": string;
-    };
-  };
-  id: string;
-  fqn: string;
   reblog: {
-    content: string;
-    akkoma: AkkomaSource;
+    id: string;
+    reblogged: boolean;
   };
+  media_attachments: UploadAttachResponse[],
+  
 }
 
-interface AkkomaSource {
-  source: {
-    content: string;
-    mediaType: "text/markdown" | "text/plain" | "text/bbcode" | "text/html" | "x.misskeymarkdown";
-  };
-}
 // API Responses
 export interface ApiResponse {
   id: number;
@@ -106,11 +83,10 @@ export interface StatusResponse {
 }
 
 export interface Account {
+  id: string;
+  username: string;
   acct: string;
   display_name: string;
-  fqn: string;
-  avatar_static: string;
-  id: string;
 }
 
 // Attachments
@@ -121,22 +97,27 @@ export interface StatusAttachment {
 }
 
 export interface UploadAttachResponse {
-  blurhash: string;
-  description: string | null;
   id: string;
+  type: "image" | "video" | "audio" | "unknown";
+  url: string;
+  preview_url: string;
+  remote_url: string | null;
+  preview_remote_url: string | null;
+  text_url: string;
   meta: {
     original: {
       aspect: number;
       height: number;
       width: number;
+      size: "string";
+    };
+    small: {
+      aspect: number;
+      height: number;
+      width: number;
+      size: "string";
     };
   };
-  pleroma: {
-    mime_type: string;
-  };
-  preview_url: string;
-  remote_url: string | null;
-  text_url: string;
-  type: "image" | "video" | "audio" | "unknown";
-  url: string;
+  description: string | null;
+  blurhash: string;
 }

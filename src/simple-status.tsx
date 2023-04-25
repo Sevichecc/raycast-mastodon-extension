@@ -13,7 +13,7 @@ import {
   LocalStorage,
 } from "@raycast/api";
 import apiServer from "./utils/api";
-import { AkkomaError, StatusResponse, Preference, StatusRequest } from "./utils/types";
+import { MastodonError, StatusResponse, Preference, StatusRequest } from "./utils/types";
 import { getAccessToken } from "./utils/oauth";
 import { dateTimeFormatter } from "./utils/util";
 
@@ -36,10 +36,9 @@ export default function SimpleCommand(props: CommandProps) {
 
   const [state, setState] = useState({
     cw: draftValues?.spoiler_text || "",
-    isMarkdown: true,
     sensitive: false,
     openActionText: "Open the last published status",
-    fqn: "",
+    username: "",
     content: draftValues?.status || "",
   });
 
@@ -52,10 +51,10 @@ export default function SimpleCommand(props: CommandProps) {
     const init = async () => {
       try {
         await getAccessToken();
-        const fqn = (await LocalStorage.getItem<string>("account-fqn")) || "";
+        const displayName = (await LocalStorage.getItem<string>("account-username")) || "";
         setState((prevState) => ({
           ...prevState,
-          fqn: fqn,
+          displayName,
         }));
       } catch (error) {
         console.error("Error during authorization or fetching account-fqn:", error);
@@ -66,8 +65,8 @@ export default function SimpleCommand(props: CommandProps) {
 
   const handleSubmit = async (value: StatusForm) => {
     try {
-      if (!value.status && !value.files) throw new Error("You might forget the content, right ? |･ω･)");
-      showToast(Toast.Style.Animated, "Publishing to the Fediverse ... ᕕ( ᐛ )ᕗ");
+      if (!value.status && !value.files) throw new Error("You might forget the content, right ? ");
+      showToast(Toast.Style.Animated, "Publishing to the Fediverse ...");
 
       const mediaIds = await Promise.all(
         value.files?.map(async (file) => {
@@ -78,7 +77,6 @@ export default function SimpleCommand(props: CommandProps) {
 
       const newStatus: Partial<StatusRequest> = {
         ...value,
-        content_type: state.isMarkdown ? "text/markdown" : "text/plain",
         media_ids: mediaIds,
         sensitive: state.sensitive,
       };
@@ -87,7 +85,7 @@ export default function SimpleCommand(props: CommandProps) {
 
       value.scheduled_at
         ? showToast(Toast.Style.Success, "Scheduled", dateTimeFormatter(value.scheduled_at, "long"))
-        : showToast(Toast.Style.Success, "Status has been published (≧∇≦)/ ! ");
+        : showToast(Toast.Style.Success, "Status has been published! ");
 
       setStatusInfo(response);
       setState((prevState) => ({
@@ -98,8 +96,8 @@ export default function SimpleCommand(props: CommandProps) {
       cache.set("latest_published_status", JSON.stringify(response));
       setTimeout(() => popToRoot(), 2000);
     } catch (error) {
-      const requestErr = error as AkkomaError;
-      showToast(Toast.Style.Failure, "Error", requestErr.message);
+      const requestErr = error as MastodonError;
+      showToast(Toast.Style.Failure, "Error", requestErr.error);
     }
   };
 
@@ -118,11 +116,11 @@ export default function SimpleCommand(props: CommandProps) {
         <ActionPanel>
           <Action.SubmitForm onSubmit={handleSubmit} title={"Publish"} icon={Icon.Upload} />
           {statusInfo && <Action.OpenInBrowser url={statusInfo.url} title={state.openActionText} />}
-          <Action.OpenInBrowser url={`https://${instance}/main/friends/`} title="Open Akkoma in Browser" />
+          <Action.OpenInBrowser url={`https://${instance}/main/friends/`} title="Open Mastodon in Browser" />
         </ActionPanel>
       }
     >
-      <Form.Description title="Account" text={state.fqn} />
+      <Form.Description title="Account" text={`${state.username}@${instance}`} />
       {state.sensitive && (
         <Form.TextField
           id="spoiler_text"
@@ -136,21 +134,13 @@ export default function SimpleCommand(props: CommandProps) {
       <Form.TextArea
         id="status"
         title="Content"
-        placeholder={`Write something down ${state.isMarkdown ? "with Markdown" : ""}`}
-        enableMarkdown={state.isMarkdown}
+        placeholder={'Write something down...'}
         autoFocus={true}
         value={state.content}
         onChange={(value) => setState((prevState) => ({ ...prevState, content: value }))}
       />
       {!props.children && <VisibilityDropdown />}
       {props.children}
-      <Form.Checkbox
-        id="markdown"
-        label="Markdown"
-        value={state.isMarkdown}
-        onChange={(value) => setState((prevState) => ({ ...prevState, isMarkdown: value }))}
-        storeValue
-      />
       <Form.Checkbox id="sensitive" label="Sensitive" value={state.sensitive} onChange={handleCw} storeValue />
     </Form>
   );

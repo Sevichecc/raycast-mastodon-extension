@@ -1,4 +1,4 @@
-import fetch from "node-fetch";
+import fetch, { HeadersInit } from "node-fetch";
 import fs from "fs";
 import { FormData, File } from "node-fetch";
 import { OAuth, getPreferenceValues } from "@raycast/api";
@@ -11,11 +11,9 @@ import {
   StatusAttachment,
   UploadAttachResponse,
   Status,
+  MastodonError,
 } from "./types";
 import { client } from "./oauth";
-import { RequestInit, Response } from "node-fetch";
-
-const { instance } = getPreferenceValues<Preference>();
 
 const CONFIG = {
   tokenUrl: "/oauth/token",
@@ -27,62 +25,49 @@ const CONFIG = {
   bookmarkUrl: "/api/v1/bookmarks",
 };
 
-const apiUrl = (instance: string, path: string): string => `https://${instance}${path}`;
-
-const fetchWithAuth = async (url: string, options: RequestInit = {}): Promise<Response> => {
+const requestApi = async <T>(method: "GET" | "POST" | "PUT" = "GET", endpoint: string, body?: object): Promise<T> => {
+  const { instance } = getPreferenceValues<Preference>();
   const tokenSet = await client.getTokens();
-  const headers = {
-    ...options.headers,
-    Authorization: `Bearer ${tokenSet?.accessToken}`,
-  };
-  return fetch(url, { ...options, headers });
+
+  const headers: HeadersInit = { Authorization: `Bearer ${tokenSet?.accessToken}` };
+
+  if (method === "POST" || method === "PUT") {
+    headers["Content-Type"] = "application/json";
+  }
+
+  const response = await fetch(`https://${instance}/${endpoint}`, {
+    method,
+    headers,
+    body: JSON.stringify(body),
+  });
+
+  if (!response.ok) throw (await response.json()) as MastodonError;
+  return (await response.json()) as T;
 };
 
-const fetchToken = async (params: URLSearchParams, errorMessage: string): Promise<OAuth.TokenResponse> => {
-  const response = await fetch(apiUrl(instance, CONFIG.tokenUrl), {
+const fetchToken = async (params: URLSearchParams): Promise<OAuth.TokenResponse> => {
+  const { instance } = getPreferenceValues<Preference>();
+  const response = await fetch(`https://${instance}/${CONFIG.tokenUrl}`, {
     method: "POST",
     body: params,
   });
 
-  if (!response.ok) throw new Error(errorMessage);
+  if (!response.ok) throw (await response.json()) as MastodonError;
   return (await response.json()) as OAuth.TokenResponse;
 };
 
-const createApp = async (): Promise<Credentials> => {
-  const response = await fetch(apiUrl(instance, CONFIG.appUrl), {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      client_name: "raycast-akkoma-extension",
-      redirect_uris: "https://raycast.com/redirect?packageName=Extension",
-      scopes: "read write",
-      website: "https://raycast.com",
-    }),
+const createApp = async (): Promise<Credentials> =>
+  requestApi<Credentials>("POST", CONFIG.appUrl, {
+    client_name: "Raycast-Mastodon-Extension",
+    redirect_uris: "https://raycast.com/redirect?packageName=Extension",
+    scopes: "read:statuses write:statuses read:bookmarks read:accounts",
+    website: "https://raycast.com",
   });
 
-  if (!response.ok) throw new Error("Failed to create Akkoma app");
+const postNewStatus = async (statusOptions: Partial<StatusRequest>): Promise<StatusResponse> =>
+  requestApi<StatusResponse>("POST", CONFIG.statusesUrl, statusOptions);
 
-  return (await response.json()) as Credentials;
-};
-
-const postNewStatus = async (statusOptions: Partial<StatusRequest>): Promise<StatusResponse> => {
-  const response = await fetchWithAuth(apiUrl(instance, CONFIG.statusesUrl), {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(statusOptions),
-  });
-
-  if (!response.ok) throw new Error("Failed to publish :(");
-
-  return (await response.json()) as StatusResponse;
-};
-
-const fetchAccountInfo = async (): Promise<Account> => {
-  const response = await fetchWithAuth(apiUrl(instance, CONFIG.verifyCredentialsUrl));
-
-  if (!response.ok) throw new Error("Failed to fetch account's info :(");
-  return (await response.json()) as Account;
-};
+const fetchAccountInfo = async (): Promise<Account> => requestApi<Account>("GET", CONFIG.verifyCredentialsUrl);
 
 const uploadAttachment = async ({ file, description }: StatusAttachment): Promise<UploadAttachResponse> => {
   const attachment = fs.readFileSync(file);
@@ -93,33 +78,22 @@ const uploadAttachment = async ({ file, description }: StatusAttachment): Promis
   formData.append("file", attachmentData);
   formData.append("description", description ?? "");
 
-  const response = await fetchWithAuth(apiUrl(instance, CONFIG.mediaUrl), {
-    method: "POST",
-    body: formData,
+  return await requestApi<UploadAttachResponse>("POST", CONFIG.mediaUrl, {
+    formData,
   });
-
-  if (!response.ok) throw new Error("Could not upload attachments");
-  return (await response.json()) as UploadAttachResponse;
 };
 
 const fetchBookmarks = async (): Promise<Status[]> => {
   const { bookmarkLimit } = getPreferenceValues<Preference>();
-  const url = bookmarkLimit ? CONFIG.bookmarkUrl + `?&limit=${bookmarkLimit}` : CONFIG.bookmarkUrl;
-
-  const response = await fetchWithAuth(apiUrl(instance, url));
-  if (!response.ok) throw new Error("Could not fetch bookmarks");
-
-  return (await response.json()) as Status[];
+  const endpoint = bookmarkLimit ? CONFIG.bookmarkUrl + `?&limit=${bookmarkLimit}` : CONFIG.bookmarkUrl;
+  return await requestApi<Status[]>("GET", endpoint);
 };
 
 const fetchUserStatus = async (): Promise<Status[]> => {
   const { id } = await fetchAccountInfo();
-  const url = CONFIG.accountsUrl + id + "/statuses?exclude_replies=false&with_muted=true";
+  const endpoint = CONFIG.accountsUrl + id + "/statuses?exclude_replies=false&exclude_reblogs=true";
 
-  const response = await fetchWithAuth(apiUrl(instance, url));
-  if (!response.ok) throw new Error("Could not fetch user's status");
-
-  return (await response.json()) as Status[];
+  return await requestApi<Status[]>("GET", endpoint);
 };
 
 export default {

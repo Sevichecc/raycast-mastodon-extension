@@ -4,10 +4,10 @@ import apiServer from "./api";
 
 export const client = new OAuth.PKCEClient({
   redirectMethod: OAuth.RedirectMethod.Web,
-  providerName: "Akkoma",
-  providerIcon: "akkoma-icon.png",
-  providerId: "akkoma",
-  description: "Connect to your Akkoma / Pleroma acount",
+  providerName: "Mastodon",
+  providerIcon: "mastodon-icon.png",
+  providerId: "mastodon",
+  description: "Connect to your Mastodon acount",
 });
 
 const requestAccessToken = async (
@@ -24,7 +24,7 @@ const requestAccessToken = async (
   params.append("grant_type", "authorization_code");
   params.append("redirect_uri", authRequest.redirectURI);
 
-  return await apiServer.fetchToken(params, "fetch tokens error:");
+  return await apiServer.fetchToken(params);
 };
 
 const refreshToken = async (
@@ -38,7 +38,7 @@ const refreshToken = async (
   params.append("refresh_token", refreshToken);
   params.append("grant_type", "refresh_token");
 
-  const tokenResponse = await apiServer.fetchToken(params, "refresh tokens error:");
+  const tokenResponse = await apiServer.fetchToken(params);
 
   tokenResponse.refresh_token = tokenResponse.refresh_token ?? refreshToken;
   return tokenResponse;
@@ -53,33 +53,33 @@ const authorize = async (): Promise<string> => {
       const { client_id, client_secret } = await apiServer.createApp();
       await client.setTokens(await refreshToken(client_id, client_secret, tokenSet.refreshToken));
     }
-    const { fqn } = await apiServer.fetchAccountInfo();
-    return fqn;
+    const { username } = await apiServer.fetchAccountInfo();
+    return username;
   }
 
   const { client_id, client_secret } = await apiServer.createApp();
   const authRequest = await client.authorizationRequest({
     endpoint: `https://${instance}/oauth/authorize`,
     clientId: client_id,
-    scope: "read write",
+    scope: "read:statuses write:statuses read:bookmarks read:accounts",
   });
 
   const { authorizationCode } = await client.authorize(authRequest);
   await client.setTokens(await requestAccessToken(client_id, client_secret, authRequest, authorizationCode));
 
-  const { fqn } = await apiServer.fetchAccountInfo();
-  await LocalStorage.setItem("account-fqn", fqn);
-  return fqn;
+  const { username } = await apiServer.fetchAccountInfo();
+  await LocalStorage.setItem("account-username", username);
+  return username;
 };
 
 async function getValidTokens(): Promise<OAuth.TokenSet> {
   const tokenSet = await client.getTokens();
 
   if (!tokenSet || !tokenSet.accessToken) {
-    const fqn = await authorize();
+    const username = await authorize();
     const updatedTokenSet = await client.getTokens();
     if (updatedTokenSet && updatedTokenSet.accessToken) {
-      await LocalStorage.setItem("account-fqn", fqn);
+      await LocalStorage.setItem("account-username", username);
       return updatedTokenSet;
     } else {
       throw new Error("Failed to get valid access token");

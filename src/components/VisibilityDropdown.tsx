@@ -6,7 +6,7 @@ const visibilityOptions: VisibilityOption[] = [
   { value: "unlisted", title: "Unlisted", icon: Icon.LivestreamDisabled },
   { value: "private", title: "Followers-only", icon: Icon.TwoPeople },
   { value: "direct", title: "Direct", icon: Icon.Envelope },
-  { value: "local", title: "Local-only", icon: Icon.Pin },
+  // { value: "local", title: "Local-only", icon: Icon.Pin },
 ];
 
 const VisibilityDropdown = () => {

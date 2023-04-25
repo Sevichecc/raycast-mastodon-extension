@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Action, ActionPanel, List, Toast, showToast, Cache } from "@raycast/api";
 
-import { Status, AkkomaError } from "./utils/types";
+import { Status, MastodonError } from "./utils/types";
 import apiServer from "./utils/api";
 import { getAccessToken } from "./utils/oauth";
 import { statusParser } from "./utils/util";
@@ -17,14 +17,14 @@ export default function BookmarkCommand() {
     const getBookmark = async () => {
       try {
         await getAccessToken();
-        showToast(Toast.Style.Animated, "Loading bookmarks..☆ﾐ(o*･ω･)ﾉ.");
+        showToast(Toast.Style.Animated, "Loading bookmarks..");
         const newBookmarks = await apiServer.fetchBookmarks();
         setBookmarks(newBookmarks);
-        showToast(Toast.Style.Success, "Bookmarked has been loaded ＼(^o^)／");
+        showToast(Toast.Style.Success, "Bookmarked has been loaded");
         cache.set("latest_bookmarks", JSON.stringify(newBookmarks));
       } catch (error) {
-        const requestErr = error as AkkomaError;
-        showToast(Toast.Style.Failure, "Error", requestErr.message);
+        const requestErr = error as MastodonError;
+        showToast(Toast.Style.Failure, "Error", requestErr.error);
       } finally {
         setIsLoading(false);
       }
@@ -36,7 +36,7 @@ export default function BookmarkCommand() {
     <List isShowingDetail isLoading={isLoading} searchBarPlaceholder="Search bookmarks">
       {bookmarks?.map((bookmark) => (
         <List.Item
-          title={bookmark.pleroma.content["text/plain"] || bookmark.akkoma.source.content}
+          title={bookmark.content.replace(/<.*?>/g, "")}
           key={bookmark.id}
           detail={<List.Item.Detail markdown={statusParser(bookmark, "idAndDate")} />}
           actions={
