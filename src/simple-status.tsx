@@ -76,8 +76,6 @@ export default function SimpleCommand(props: CommandProps) {
           return id;
         }) ?? []
       );
-
-
       const newStatus: Partial<StatusRequest> = {
         ...value,
         media_ids: mediaIds,

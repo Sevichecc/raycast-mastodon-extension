@@ -38,9 +38,7 @@ export default function ViewStatusCommand() {
     <List isShowingDetail isLoading={isLoading} searchBarPlaceholder="Search your status">
       {filterReblog(statuses)?.map((status) => (
         <List.Item
-          title={
-            status.content.replace(/<.*?>/g, "")
-          }
+          title={status.content.replace(/<.*?>/g, "")}
           key={status.id}
           detail={<List.Item.Detail markdown={statusParser(status, "date")} />}
           actions={
