@@ -14,7 +14,7 @@ export default function ViewStatusCommand() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const getBookmark = async () => {
+    const getStatus = async () => {
       try {
         await getAccessToken();
         showToast(Toast.Style.Animated, "Loading Status...");
@@ -29,7 +29,7 @@ export default function ViewStatusCommand() {
         setIsLoading(false);
       }
     };
-    getBookmark();
+    getStatus();
   }, []);
 
   const filterReblog = (statuses: Status[]) => statuses.filter((status) => !status.reblog);
