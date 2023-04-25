@@ -46,7 +46,7 @@ export interface StatusRequest {
   visibility: VisibilityScope;
   language?: string;
   scheduled_at?: Date;
-  content_type?: "text/markdown" | "text/plain" | "text/html" ;
+  content_type?: "text/markdown" | "text/plain" | "text/html";
 }
 
 export interface Status {
@@ -92,6 +92,7 @@ export interface Account {
 // Attachments
 export interface StatusAttachment {
   file: string;
+  thumbnail?: object;
   description?: string;
   focus?: { x: number; y: number };
 }
@@ -105,6 +106,10 @@ export interface UploadAttachResponse {
   preview_remote_url: string | null;
   text_url: string;
   meta: {
+    focus?: {
+      x: number;
+      y: number;
+    };
     original: {
       aspect: number;
       height: number;
