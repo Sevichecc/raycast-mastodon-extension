@@ -116,7 +116,7 @@ export default function SimpleCommand(props: CommandProps) {
       enableDrafts
       actions={
         <ActionPanel>
-          <Action.SubmitForm onSubmit={handleSubmit} title={"Publish"} icon={Icon.Upload} />
+          <Action.SubmitForm onSubmit={handleSubmit} title={"Toot"} icon={Icon.Upload} />
           {statusInfo && <Action.OpenInBrowser url={statusInfo.url} title={state.openActionText} />}
           <Action.OpenInBrowser url={`https://${instance}/main/friends/`} title="Open Mastodon in Browser" />
         </ActionPanel>

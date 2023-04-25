@@ -70,7 +70,7 @@
       "name": "enableMarkdown",
       "type": "checkbox",
       "required": true,
-      "label": "Build-in Markdown Support",
+      "label": "Built-in Markdown Support",
       "description": "Does this instance have built-in markdown support?"
     },
     {
