@@ -44,14 +44,14 @@ const refreshToken = async (
 };
 
 const authorize = async (): Promise<string> => {
-  const { instance } : Preferences = getPreferenceValues();
-  
+  const { instance }: Preferences = getPreferenceValues();
+
   if (!instance) {
-    throw new Error('instance is required')
+    throw new Error("instance is required");
   }
 
   const tokenSet = await client.getTokens();
-  
+
   if (tokenSet?.accessToken) {
     if (tokenSet.refreshToken && tokenSet.isExpired()) {
       const { client_id, client_secret } = await apiServer.createApp();

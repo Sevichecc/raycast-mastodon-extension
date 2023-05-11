@@ -30,10 +30,10 @@ const requestApi = async <T>(
   body?: object,
   isFormData?: boolean
 ): Promise<T> => {
-  const { instance } : Preferences = getPreferenceValues();
-  
+  const { instance }: Preferences = getPreferenceValues();
+
   if (!instance) {
-    throw new Error('instance is required')
+    throw new Error("instance is required");
   }
 
   const tokenSet = await client.getTokens();
@@ -55,9 +55,9 @@ const requestApi = async <T>(
 
 const fetchToken = async (params: URLSearchParams): Promise<OAuth.TokenResponse> => {
   const { instance }: Preferences = getPreferenceValues();
-  
+
   if (!instance) {
-    throw new Error('instance is required')
+    throw new Error("instance is required");
   }
 
   const response = await fetch(`https://${instance}/${CONFIG.tokenUrl}`, {
@@ -93,7 +93,7 @@ const uploadAttachment = async ({ file, description }: StatusAttachment): Promis
 };
 
 const fetchBookmarks = async (): Promise<Status[]> => {
-  const { bookmarkLimit } : Preferences.Bookmark = getPreferenceValues();
+  const { bookmarkLimit }: Preferences.Bookmark = getPreferenceValues();
   const endpoint = bookmarkLimit ? CONFIG.bookmarkUrl + `?&limit=${bookmarkLimit}` : CONFIG.bookmarkUrl;
   return await requestApi<Status[]>("GET", endpoint);
 };

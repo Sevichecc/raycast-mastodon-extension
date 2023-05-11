@@ -118,7 +118,9 @@ export default function SimpleCommand(props: CommandProps) {
         <ActionPanel>
           <Action.SubmitForm onSubmit={handleSubmit} title={"Toot"} icon={Icon.Upload} />
           {statusInfo && <Action.OpenInBrowser url={statusInfo.url} title={state.openActionText} />}
-          {instance && <Action.OpenInBrowser url={`https://${instance}/main/friends/`} title="Open Mastodon in Browser" />}
+          {instance && (
+            <Action.OpenInBrowser url={`https://${instance}/main/friends/`} title="Open Mastodon in Browser" />
+          )}
         </ActionPanel>
       }
     >
