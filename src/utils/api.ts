@@ -4,7 +4,6 @@ import { FormData, File } from "node-fetch";
 import { OAuth, getPreferenceValues } from "@raycast/api";
 import {
   Credentials,
-  Preference,
   StatusRequest,
   StatusResponse,
   Account,
@@ -31,9 +30,13 @@ const requestApi = async <T>(
   body?: object,
   isFormData?: boolean
 ): Promise<T> => {
-  const { instance } = getPreferenceValues<Preference>();
-  const tokenSet = await client.getTokens();
+  const { instance } : Preferences = getPreferenceValues();
+  
+  if (!instance) {
+    throw new Error('instance is required')
+  }
 
+  const tokenSet = await client.getTokens();
   const headers: HeadersInit = { Authorization: `Bearer ${tokenSet?.accessToken}` };
 
   if ((method === "POST" || method === "PUT") && !isFormData) {
@@ -51,7 +54,12 @@ const requestApi = async <T>(
 };
 
 const fetchToken = async (params: URLSearchParams): Promise<OAuth.TokenResponse> => {
-  const { instance } = getPreferenceValues<Preference>();
+  const { instance }: Preferences = getPreferenceValues();
+  
+  if (!instance) {
+    throw new Error('instance is required')
+  }
+
   const response = await fetch(`https://${instance}/${CONFIG.tokenUrl}`, {
     method: "POST",
     body: params,
@@ -85,7 +93,7 @@ const uploadAttachment = async ({ file, description }: StatusAttachment): Promis
 };
 
 const fetchBookmarks = async (): Promise<Status[]> => {
-  const { bookmarkLimit } = getPreferenceValues<Preference>();
+  const { bookmarkLimit } : Preferences.Bookmark = getPreferenceValues();
   const endpoint = bookmarkLimit ? CONFIG.bookmarkUrl + `?&limit=${bookmarkLimit}` : CONFIG.bookmarkUrl;
   return await requestApi<Status[]>("GET", endpoint);
 };

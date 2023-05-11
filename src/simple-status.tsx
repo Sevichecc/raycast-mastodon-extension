@@ -13,14 +13,14 @@ import {
   LocalStorage,
 } from "@raycast/api";
 import apiServer from "./utils/api";
-import { MastodonError, StatusResponse, Preference, StatusRequest } from "./utils/types";
+import { MastodonError, StatusResponse, StatusRequest } from "./utils/types";
 import { getAccessToken } from "./utils/oauth";
 import { dateTimeFormatter } from "./utils/util";
 
 import VisibilityDropdown from "./components/VisibilityDropdown";
 
 const cache = new Cache();
-const { instance, enableMarkdown } = getPreferenceValues<Preference>();
+const { instance, enableMarkdown }: Preferences = getPreferenceValues();
 
 interface CommandProps extends LaunchProps<{ draftValues: Partial<StatusRequest> }> {
   children?: React.ReactNode;
@@ -118,7 +118,7 @@ export default function SimpleCommand(props: CommandProps) {
         <ActionPanel>
           <Action.SubmitForm onSubmit={handleSubmit} title={"Toot"} icon={Icon.Upload} />
           {statusInfo && <Action.OpenInBrowser url={statusInfo.url} title={state.openActionText} />}
-          <Action.OpenInBrowser url={`https://${instance}/main/friends/`} title="Open Mastodon in Browser" />
+          {instance && <Action.OpenInBrowser url={`https://${instance}/main/friends/`} title="Open Mastodon in Browser" />}
         </ActionPanel>
       }
     >

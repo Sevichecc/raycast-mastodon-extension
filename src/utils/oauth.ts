@@ -1,5 +1,4 @@
 import { LocalStorage, OAuth, getPreferenceValues } from "@raycast/api";
-import { Preference } from "./types";
 import apiServer from "./api";
 
 export const client = new OAuth.PKCEClient({
@@ -45,9 +44,14 @@ const refreshToken = async (
 };
 
 const authorize = async (): Promise<string> => {
-  const { instance } = getPreferenceValues<Preference>();
-  const tokenSet = await client.getTokens();
+  const { instance } : Preferences = getPreferenceValues();
+  
+  if (!instance) {
+    throw new Error('instance is required')
+  }
 
+  const tokenSet = await client.getTokens();
+  
   if (tokenSet?.accessToken) {
     if (tokenSet.refreshToken && tokenSet.isExpired()) {
       const { client_id, client_secret } = await apiServer.createApp();
