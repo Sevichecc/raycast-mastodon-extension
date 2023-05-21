@@ -77,9 +77,6 @@ const createApp = async (): Promise<Credentials> =>
     website: "https://raycast.com",
   });
 
-const postNewStatus = async (statusOptions: Partial<StatusRequest>): Promise<StatusResponse> =>
-  requestApi<StatusResponse>("POST", CONFIG.statusesUrl, statusOptions);
-
 const fetchAccountInfo = async (): Promise<Account> => requestApi<Account>("GET", CONFIG.verifyCredentialsUrl);
 
 const uploadAttachment = async ({ file, description }: StatusAttachment): Promise<UploadAttachResponse> => {
@@ -105,6 +102,24 @@ const fetchUserStatus = async (): Promise<Status[]> => {
   return await requestApi<Status[]>("GET", endpoint);
 };
 
+const postNewStatus = async (statusOptions: Partial<StatusRequest>): Promise<StatusResponse> =>
+  requestApi<StatusResponse>("POST", CONFIG.statusesUrl, statusOptions);
+
+const favouriteStatus = async (id: string): Promise<Status> =>
+  requestApi<Status>("POST", `${CONFIG.statusesUrl}/${id}/favourite`);
+
+const undoFavouriteStatus = async (id: string): Promise<Status> =>
+  requestApi<Status>("POST", `${CONFIG.statusesUrl}/${id}/unfavourite`);
+
+const boostStatus = async (id: string): Promise<Status> =>
+  requestApi<Status>("POST", `${CONFIG.statusesUrl}/${id}/reblog`);
+
+const undoBoostStatus = async (id: string): Promise<Status> =>
+  requestApi<Status>("POST", `${CONFIG.statusesUrl}/${id}/unreblog`);
+
+const toggleBookmark = async (id: string): Promise<Status> =>
+  requestApi<Status>("POST", `${CONFIG.statusesUrl}/${id}/bookmark`);
+
 export default {
   fetchToken,
   createApp,
@@ -113,4 +128,9 @@ export default {
   uploadAttachment,
   fetchBookmarks,
   fetchUserStatus,
+  toggleBookmark,
+  boostStatus,
+  undoBoostStatus,
+  favouriteStatus,
+  undoFavouriteStatus,
 };
