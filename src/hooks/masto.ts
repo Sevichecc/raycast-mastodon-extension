@@ -13,8 +13,7 @@ export function useMe() {
 
       if (storedUsername) {
         setUsername(storedUsername);
-      }
-      {
+      } else {
         const { username } = await apiServer.fetchAccountInfo();
         await LocalStorage.setItem("account-username", username);
         setUsername(username);
