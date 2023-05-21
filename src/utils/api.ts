@@ -22,12 +22,14 @@ const CONFIG = {
   verifyCredentialsUrl: "/api/v1/accounts/verify_credentials",
   mediaUrl: "/api/v2/media",
   bookmarkUrl: "/api/v1/bookmarks",
+  homeTLUrl:'/api/v1/timelines/home',
+  publicTLUrl:'/api/v1/timelines/public'
 };
 
 const requestApi = async <T>(
   method: "GET" | "POST" | "PUT" = "GET",
   endpoint: string,
-  body?: object,
+  body?: any,
   isFormData?: boolean
 ): Promise<T> => {
   const { instance }: Preferences = getPreferenceValues();
@@ -91,7 +93,10 @@ const uploadAttachment = async ({ file, description }: StatusAttachment): Promis
 
 const fetchBookmarks = async (): Promise<Status[]> => {
   const { bookmarkLimit }: Preferences.Bookmark = getPreferenceValues();
-  const endpoint = bookmarkLimit ? CONFIG.bookmarkUrl + `?&limit=${bookmarkLimit}` : CONFIG.bookmarkUrl;
+  const endpoint = bookmarkLimit
+    ? CONFIG.bookmarkUrl + `?&limit=${bookmarkLimit}`
+    : CONFIG.bookmarkUrl;
+
   return await requestApi<Status[]>("GET", endpoint);
 };
 
@@ -101,6 +106,20 @@ const fetchUserStatus = async (): Promise<Status[]> => {
 
   return await requestApi<Status[]>("GET", endpoint);
 };
+
+const fetchHomeTL = async (): Promise<Status[]> => {
+  const { statusLimit }: Preferences.Timeline = getPreferenceValues()
+  const endpoint = statusLimit
+      ? CONFIG.homeTLUrl + `?&limit=${statusLimit}` 
+      : CONFIG.homeTLUrl;
+
+  return await requestApi<Status[]>("GET", endpoint)
+}
+
+// TODO: Add query parameters ? local only ? 
+
+const fetchPublicTL = async (): Promise<Status[]> => 
+  requestApi<Status[]>("GET", CONFIG.publicTLUrl)
 
 const postNewStatus = async (statusOptions: Partial<StatusRequest>): Promise<StatusResponse> =>
   requestApi<StatusResponse>("POST", CONFIG.statusesUrl, statusOptions);
@@ -128,6 +147,8 @@ export default {
   uploadAttachment,
   fetchBookmarks,
   fetchUserStatus,
+  fetchHomeTL,
+  fetchPublicTL,
   toggleBookmark,
   boostStatus,
   undoBoostStatus,
