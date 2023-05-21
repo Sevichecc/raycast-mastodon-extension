@@ -14,7 +14,7 @@ import {
 import apiServer from "./utils/api";
 import { MastodonError, StatusResponse, StatusRequest } from "./utils/types";
 import { dateTimeFormatter } from "./utils/util";
-import { useMe } from "./hooks/useMe";
+import { useMe } from "./hooks/masto";
 
 import VisibilityDropdown from "./components/VisibilityDropdown";
 
