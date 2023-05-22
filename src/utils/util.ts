@@ -27,8 +27,12 @@ export const statusParser = (
   { content, media_attachments, account, created_at }: Status,
   type: "idAndDate" | "date"
 ) => {
-  const images = media_attachments.filter((attachment) => attachment.type === "image");
-  const parsedImages = images.reduce((link, image) => link + `![${image.description}](${image.remote_url})`, "");
+  const images = media_attachments.filter((attachment) => attachment.type === "gifv" ||  attachment.type === "image");
+
+  const parsedImages = images.reduce(
+    (link, image) => link + `![${image.description ?? ""}](${image.preview_url || image.remote_url})`,
+    ""
+  );
 
   const date = new Date(created_at);
   const parsedTime = dateTimeFormatter(date, "short");

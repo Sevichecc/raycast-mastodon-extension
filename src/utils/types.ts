@@ -145,7 +145,7 @@ export interface StatusAttachment {
 
 export interface UploadAttachResponse {
   id: string;
-  type: "image" | "video" | "audio" | "unknown";
+  type: "image" | "video" | "audio" | "gifv" |  "unknown" ;
   url: string;
   preview_url: string;
   remote_url: string | null;
