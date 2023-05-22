@@ -37,11 +37,12 @@ export const statusParser = (
   const date = new Date(created_at);
   const parsedTime = dateTimeFormatter(date, "short");
 
-  console.log(account.acct);
-  return type === "id"
-    ? ` _@${account.acct}_ ` + nhm.translate("<br>" + content) + parsedImages
-    : `_${parsedTime}_` + nhm.translate("<br>" + content) + parsedImages;
+  return ( type === "id"
+    ? `## \`@${account.acct}\` `
+    : `_${parsedTime}_` )
+    + nhm.translate("<br>" + content) + parsedImages
 };
+
 
 export const getIconForVisibility = (visibility: VisibilityScope) => {
   switch (visibility) {
