@@ -1,5 +1,7 @@
-import { Status } from "./types";
+import { Status, VisibilityScope } from "./types";
 import { NodeHtmlMarkdown } from "node-html-markdown";
+import { Icon } from "@raycast/api";
+
 const nhm = new NodeHtmlMarkdown();
 
 export const dateTimeFormatter = (time: Date, type: "short" | "long") => {
@@ -34,4 +36,19 @@ export const statusParser = (
   return type === "idAndDate"
     ? ` _@${account.acct} (${parsedTime})_ ` + nhm.translate("<br>" + content) + parsedImages
     : `_${parsedTime}_` + nhm.translate("<br>" + content) + parsedImages;
+};
+
+export const getIconForVisibility = (visibility: VisibilityScope) => {
+  switch (visibility) {
+    case "public":
+      return Icon.Livestream;
+    case "unlisted":
+      return Icon.LivestreamDisabled;
+    case "private":
+      return Icon.TwoPeople;
+    case "direct":
+      return Icon.Envelope;
+    default:
+      return Icon.Livestream;
+  }
 };

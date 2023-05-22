@@ -54,16 +54,22 @@ export interface Status {
   created_at: Date;
   url: string;
   uri: string;
+  replies_count: number;
+  reblogs_count: number;
+  favourites_count: number;
+  sensitive: boolean;
+  spoiler_text: string;
+  visibility: VisibilityScope;
+  favourited: boolean;
+  bookmarked: boolean;
+  reblogged: boolean;
   application: {
     name: string;
     website: string;
   };
   account: Account;
   content: string;
-  reblog: {
-    id: string;
-    reblogged: boolean;
-  };
+  reblog: Status;
   media_attachments: UploadAttachResponse[];
 }
 
@@ -87,6 +93,46 @@ export interface Account {
   username: string;
   acct: string;
   display_name: string;
+  locked: boolean;
+  bot: boolean;
+  discoverable: boolean;
+  group: boolean;
+  created_at: Date;
+  note: string;
+  url: string;
+  avatar: string;
+  avatar_static: string;
+  header: string;
+  header_static: string;
+  followers_count: number;
+  following_count: number;
+  statuses_count: number;
+  last_status_at: Date;
+  noindex: boolean;
+  emojis: CustomEmoji[];
+  roles: Role[];
+  fields: Field[];
+}
+
+interface Field {
+  name: string;
+  value: string;
+  verified_at: Date;
+}
+
+interface Role {
+  id: number;
+  name: string;
+  color: string;
+  permissions: number;
+  highlighted: boolean;
+}
+interface CustomEmoji {
+  shortcode: string;
+  url: string;
+  static_url: string;
+  visible_in_picker: boolean;
+  category: string;
 }
 
 // Attachments

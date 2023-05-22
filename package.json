@@ -57,9 +57,9 @@
       ]
     },
     {
-      "name": "timeline",
-      "title": "View your home timeline",
-      "description": "View your home timeline",
+      "name": "home",
+      "title": "View home timeline",
+      "description": "View home timeline",
       "mode": "view",
       "preferences": [
         {

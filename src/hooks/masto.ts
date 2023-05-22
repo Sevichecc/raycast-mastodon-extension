@@ -1,6 +1,7 @@
-import { LocalStorage } from "@raycast/api";
+import { LocalStorage, showToast, Toast } from "@raycast/api";
 import { useEffect, useState } from "react";
 import { getAccessToken } from "../utils/oauth";
+import { MastodonError, Status } from "../utils/types";
 import apiServer from "../utils/api";
 
 export function useMe() {
@@ -15,8 +16,8 @@ export function useMe() {
         setUsername(storedUsername);
       } else {
         const { username } = await apiServer.fetchAccountInfo();
-        await LocalStorage.setItem("account-username", username);
         setUsername(username);
+        await LocalStorage.setItem("account-username", username);
       }
     } catch (error) {
       console.error("Error during authorization or fetching account-username:", error);
@@ -30,5 +31,29 @@ export function useMe() {
   return {
     username,
     fetchUsername,
+  };
+}
+
+export function useHomeTL() {
+  const [statuses, setStatuses] = useState<Status[]>();
+
+  const fetchHomeTL = async () => {
+    try {
+      await getAccessToken();
+      const tlStatuses = await apiServer.fetchHomeTL();
+      setStatuses(tlStatuses);
+    } catch (error) {
+      const requestErr = error as MastodonError;
+      showToast(Toast.Style.Failure, "Error", requestErr.error || (error as Error).message);
+    }
+  };
+
+  useEffect(() => {
+    fetchHomeTL();
+  }, []);
+
+  return {
+    statuses,
+    fetchHomeTL,
   };
 }
