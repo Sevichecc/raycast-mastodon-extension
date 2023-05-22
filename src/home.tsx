@@ -7,12 +7,6 @@ import StatusItem from "./components/StatusItem";
 
 export default function Home() {
   const { statuses } = useHomeTL();
-  // const { data, isLoadinges.listHome();
-  //   },
-  //   [masto]
-  // );
-
-  // console.log(!masto || isLoading, !masto, isLoading);
 
   return (
     <List isShowingDetail>

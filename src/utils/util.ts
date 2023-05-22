@@ -48,12 +48,15 @@ export const statusParser = (
   );
 };
 
+export const getTextForVisibility = (visibility: VisibilityScope) =>
+  visibility.charAt(0).toUpperCase() + visibility.slice(1);
+
 export const getIconForVisibility = (visibility: VisibilityScope) => {
   switch (visibility) {
     case "public":
-      return Icon.Livestream;
+      return Icon.Globe;
     case "unlisted":
-      return Icon.LivestreamDisabled;
+      return Icon.LockUnlocked;
     case "private":
       return Icon.TwoPeople;
     case "direct":
