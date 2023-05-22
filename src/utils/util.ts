@@ -38,7 +38,7 @@ export const statusParser = (
   const parsedTime = dateTimeFormatter(date, "short");
 
   return ( type === "id"
-    ? `## \`@${account.acct}\` `
+    ? `**${account.display_name || account.username}** \`@${account.acct}\``
     : `_${parsedTime}_` )
     + nhm.translate("<br>" + content) + parsedImages
 };
