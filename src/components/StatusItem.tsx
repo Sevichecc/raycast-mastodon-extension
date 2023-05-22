@@ -1,4 +1,4 @@
-import { List, Icon, Image } from "@raycast/api";
+import { List, Icon, Image, Color } from "@raycast/api";
 import { Status } from "../utils/types";
 import { statusParser, getIconForVisibility } from "../utils/util";
 import { dateTimeFormatter } from "../utils/util";
@@ -25,11 +25,20 @@ const StatusItem: React.FC<StatusItemProps> = ({ status }) => {
           markdown={statusParser(status, "id")}
           metadata={
             <List.Item.Detail.Metadata>
-              <List.Item.Detail.Metadata.Label title="Reblogs" text={String(status.reblogs_count)} icon={Icon.Repeat} />
+              <List.Item.Detail.Metadata.Label
+                title="Boosts"
+                text={String(status.reblogs_count)}
+                icon={{
+                  source: Icon.Repeat,
+                  tintColor: status.reblogged ? Color.Purple : Color.PrimaryText
+                }} />
               <List.Item.Detail.Metadata.Label
                 title="Favorites"
                 text={String(status.favourites_count)}
-                icon={Icon.Star}
+                icon={{
+                  source: Icon.Star,
+                  tintColor: status.favourited ? Color.Yellow : Color.PrimaryText
+                }}
               />
               <List.Item.Detail.Metadata.Label title="Replies" text={String(status.replies_count)} icon={Icon.Reply} />
               <List.Item.Detail.Metadata.Separator />
