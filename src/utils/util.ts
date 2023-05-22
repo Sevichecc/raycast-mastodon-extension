@@ -25,20 +25,21 @@ export const dateTimeFormatter = (time: Date, type: "short" | "long") => {
 
 export const statusParser = (
   { content, media_attachments, account, created_at }: Status,
-  type: "idAndDate" | "date"
+  type: "id" | "date"
 ) => {
   const images = media_attachments.filter((attachment) => attachment.type === "gifv" ||  attachment.type === "image");
 
   const parsedImages = images.reduce(
-    (link, image) => link + `![${image.description ?? ""}](${image.preview_url || image.remote_url})`,
+    (link, image) => link + `![${image.description ?? ""}](${image.preview_url || image.remote_url || image.preview_remote_url})`,
     ""
   );
 
   const date = new Date(created_at);
   const parsedTime = dateTimeFormatter(date, "short");
 
-  return type === "idAndDate"
-    ? ` _@${account.acct} (${parsedTime})_ ` + nhm.translate("<br>" + content) + parsedImages
+  console.log(account.acct);
+  return type === "id"
+    ? ` _@${account.acct}_ ` + nhm.translate("<br>" + content) + parsedImages
     : `_${parsedTime}_` + nhm.translate("<br>" + content) + parsedImages;
 };
 

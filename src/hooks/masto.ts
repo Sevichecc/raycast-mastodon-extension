@@ -1,8 +1,10 @@
-import { LocalStorage, showToast, Toast } from "@raycast/api";
+import { LocalStorage, showToast, Toast, Cache } from "@raycast/api";
 import { useEffect, useState } from "react";
 import { getAccessToken } from "../utils/oauth";
 import { MastodonError, Status } from "../utils/types";
 import apiServer from "../utils/api";
+
+const cache = new Cache();
 
 export function useMe() {
   const [username, setUsername] = useState("");
@@ -35,13 +37,15 @@ export function useMe() {
 }
 
 export function useHomeTL() {
-  const [statuses, setStatuses] = useState<Status[]>();
+  const cached = cache.get("latest_home_statuses");
+  const [statuses, setStatuses] = useState<Status[]>(cached ? JSON.parse(cached) : []);
 
   const fetchHomeTL = async () => {
     try {
       await getAccessToken();
       const tlStatuses = await apiServer.fetchHomeTL();
       setStatuses(tlStatuses);
+      cache.set("latest_home_statuses", JSON.stringify(tlStatuses))
     } catch (error) {
       const requestErr = error as MastodonError;
       showToast(Toast.Style.Failure, "Error", requestErr.error || (error as Error).message);
