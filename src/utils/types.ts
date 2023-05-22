@@ -71,21 +71,25 @@ export interface Status {
   content: string;
   reblog: Status;
   media_attachments: UploadAttachResponse[];
+  card: Card;
 }
 
-// API Responses
-export interface ApiResponse {
-  id: number;
-  created_at: string;
-  text: string;
-}
-
-export interface StatusResponse {
-  id: string;
-  create_at: Date;
-  content: string;
-  application: Application;
+interface Card {
   url: string;
+  title: string;
+  description: string;
+  language: string;
+  type: "link" | "photo" | "video" | "rich";
+  author_name: string;
+  author_url: string;
+  provider_name: string;
+  provider_url: string;
+  html: string;
+  width: number;
+  height: number;
+  image: string | null;
+  embed_url: string;
+  blurhash: string;
 }
 
 export interface Account {
@@ -135,6 +139,21 @@ interface CustomEmoji {
   category: string;
 }
 
+// API Responses
+export interface ApiResponse {
+  id: number;
+  created_at: string;
+  text: string;
+}
+
+export interface StatusResponse {
+  id: string;
+  create_at: Date;
+  content: string;
+  application: Application;
+  url: string;
+}
+
 // Attachments
 export interface StatusAttachment {
   file: string;
@@ -145,7 +164,7 @@ export interface StatusAttachment {
 
 export interface UploadAttachResponse {
   id: string;
-  type: "image" | "video" | "audio" | "gifv" |  "unknown" ;
+  type: "image" | "video" | "audio" | "gifv" | "unknown";
   url: string;
   preview_url: string;
   remote_url: string | null;

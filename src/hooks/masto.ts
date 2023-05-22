@@ -45,7 +45,7 @@ export function useHomeTL() {
       await getAccessToken();
       const tlStatuses = await apiServer.fetchHomeTL();
       setStatuses(tlStatuses);
-      cache.set("latest_home_statuses", JSON.stringify(tlStatuses))
+      cache.set("latest_home_statuses", JSON.stringify(tlStatuses));
     } catch (error) {
       const requestErr = error as MastodonError;
       showToast(Toast.Style.Failure, "Error", requestErr.error || (error as Error).message);
