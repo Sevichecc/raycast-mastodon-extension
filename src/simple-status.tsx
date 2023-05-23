@@ -15,14 +15,10 @@ interface CommandProps extends LaunchProps<{ draftValues: Partial<StatusRequest>
 
 export default function SimpleCommand(props: CommandProps) {
   const { draftValues } = props;
-  const { handleSubmit, status, setStatus, statusInfo, openActionText } = useSubmitStatus(draftValues);
+  const { handleSubmit, status, setStatus, statusInfo, openActionText, itemProps } = useSubmitStatus(draftValues);
 
   const { username, fetchUsername } = useMe();
   if (username.length === 0) fetchUsername();
-
-  const { itemProps } = useForm<StatusFormValues>({
-    onSubmit: () => true,
-  });
 
   const cwRef = useRef<Form.TextField>(null);
 

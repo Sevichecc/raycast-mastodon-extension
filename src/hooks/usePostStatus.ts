@@ -3,6 +3,7 @@ import { showToast, popToRoot, Toast, Cache } from "@raycast/api";
 import apiServer from "../utils/api";
 import { MastodonError, StatusResponse, StatusRequest } from "../utils/types";
 import { dateTimeFormatter } from "../utils/util";
+import { useForm } from "@raycast/utils";
 
 const cache = new Cache();
 
@@ -24,53 +25,54 @@ export function useSubmitStatus(draftValues: Partial<StatusRequest> | undefined)
     content: draftValues?.status || "",
   });
 
-  const checkScheduled = (time: Date) => {
-    const now = Date.now();
-    const scheduled = new Date(time);
-    if (scheduled.getTime() - now < 300000) {
-      throw new Error("The scheduled time must be more than 5 minutes.");
-    }
-  };
+  const { handleSubmit, itemProps } = useForm<StatusFormValues>({
+    onSubmit: async (value: StatusFormValues) => {
+      try {
+        if (value.status.trim().length === 0 && value.files.length === 0)
+          throw new Error("You might forget the content, right ? ");
+        
+        showToast(Toast.Style.Animated, "Publishing to the Fediverse ...");
 
-  const handleSubmit = async (value: StatusFormValues) => {
-    try {
-      if (value.status.trim().length === 0 && value.files.length === 0)
-        throw new Error("You might forget the content, right ? ");
+        const mediaIds = await Promise.all(
+          value.files?.map(async (file: string) => {
+            const { id } = await apiServer.uploadAttachment({ file, description: value.description });
+            return id;
+          }) ?? []
+        );
 
-      if (value.scheduled_at) {
-        checkScheduled(value.scheduled_at);
+        const newStatus: Partial<StatusRequest> = {
+          ...value,
+          media_ids: mediaIds,
+          sensitive: status.sensitive,
+          content_type: value.isMarkdown ? "text/markdown" : "text/plain",
+        };
+
+        const response = await apiServer.postNewStatus(newStatus);
+        value.scheduled_at
+          ? showToast(Toast.Style.Success, "Scheduled", dateTimeFormatter(value.scheduled_at, "long"))
+          : showToast(Toast.Style.Success, "Status has been published! ");
+
+        setStatusInfo(response);
+        setOpenActionText("View the status in Browser");
+        cache.set("latest_published_status", JSON.stringify(response));
+        setTimeout(() => popToRoot(), 2000);
+      } catch (error) {
+        const requestErr = error as MastodonError;
+        showToast(Toast.Style.Failure, "Error", requestErr.error || (error as Error).message);
       }
+    },
+    validation: {
+      scheduled_at: (value) => {
+        if (value) {
+          const now = Date.now();
+          const scheduled = new Date(value);
+          if (scheduled.getTime() - now < 300000) {
+            return "The scheduled time must be more than 5 minutes.";
+          }
+        }
+      },
+    },
+  });
 
-      showToast(Toast.Style.Animated, "Publishing to the Fediverse ...");
-
-      const mediaIds = await Promise.all(
-        value.files?.map(async (file: string) => {
-          const { id } = await apiServer.uploadAttachment({ file, description: value.description });
-          return id;
-        }) ?? []
-      );
-
-      const newStatus: Partial<StatusRequest> = {
-        ...value,
-        media_ids: mediaIds,
-        sensitive: status.sensitive,
-        content_type: value.isMarkdown ? "text/markdown" : "text/plain",
-      };
-
-      const response = await apiServer.postNewStatus(newStatus);
-      value.scheduled_at
-        ? showToast(Toast.Style.Success, "Scheduled", dateTimeFormatter(value.scheduled_at, "long"))
-        : showToast(Toast.Style.Success, "Status has been published! ");
-
-      setStatusInfo(response);
-      setOpenActionText("View the status in Browser");
-      cache.set("latest_published_status", JSON.stringify(response));
-      setTimeout(() => popToRoot(), 2000);
-    } catch (error) {
-      const requestErr = error as MastodonError;
-      showToast(Toast.Style.Failure, "Error", requestErr.error || (error as Error).message);
-    }
-  };
-
-  return { handleSubmit, status, setStatus, statusInfo, openActionText };
+  return { handleSubmit, status, setStatus, statusInfo, openActionText, itemProps };
 }
