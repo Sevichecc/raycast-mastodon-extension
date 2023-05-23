@@ -3,7 +3,7 @@ import { useBookmark } from "./hooks/useBookmarks";
 import StatusItem from "./components/StatusItem";
 
 export default function BookmarkCommand() {
-  const { bookmarks, isLoading } = useBookmark()
+  const { bookmarks, isLoading } = useBookmark();
 
   return (
     <List isShowingDetail isLoading={isLoading} searchBarPlaceholder="Search bookmarks">

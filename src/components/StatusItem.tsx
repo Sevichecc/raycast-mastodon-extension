@@ -23,7 +23,7 @@ const StatusItem: React.FC<StatusItemProps> = ({ status, showMetaData }) => {
         <List.Item.Detail
           markdown={statusParser(status, "id")}
           metadata={
-            showMetaData ?
+            showMetaData ? (
               <List.Item.Detail.Metadata>
                 <List.Item.Detail.Metadata.Label
                   title="Boosts"
@@ -41,7 +41,11 @@ const StatusItem: React.FC<StatusItemProps> = ({ status, showMetaData }) => {
                     tintColor: status.favourited ? Color.Yellow : Color.PrimaryText,
                   }}
                 />
-                <List.Item.Detail.Metadata.Label title="Replies" text={String(status.replies_count)} icon={Icon.Reply} />
+                <List.Item.Detail.Metadata.Label
+                  title="Replies"
+                  text={String(status.replies_count)}
+                  icon={Icon.Reply}
+                />
                 <List.Item.Detail.Metadata.Separator />
                 <List.Item.Detail.Metadata.Label
                   title="Visibility"
@@ -49,7 +53,8 @@ const StatusItem: React.FC<StatusItemProps> = ({ status, showMetaData }) => {
                   icon={getIconForVisibility(status.visibility)}
                 />
                 <List.Item.Detail.Metadata.Label title="Published Time" text={time} />
-              </List.Item.Detail.Metadata> : null
+              </List.Item.Detail.Metadata>
+            ) : null
           }
         />
       }

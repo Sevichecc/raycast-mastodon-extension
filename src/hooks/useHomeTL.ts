@@ -9,8 +9,8 @@ const cache = new Cache();
 export function useHomeTL() {
   const cached = cache.get("latest_home_statuses");
   const [statuses, setStatuses] = useState<Status[]>(cached ? JSON.parse(cached) : []);
-  const [isLoading, setIsLoading] = useState(true)
-  
+  const [isLoading, setIsLoading] = useState(true);
+
   const fetchHomeTL = useCallback(async () => {
     try {
       await getAccessToken();
@@ -35,6 +35,6 @@ export function useHomeTL() {
   return {
     statuses,
     fetchHomeTL,
-    isLoading
+    isLoading,
   };
 }
