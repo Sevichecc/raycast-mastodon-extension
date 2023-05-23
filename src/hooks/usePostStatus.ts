@@ -19,13 +19,7 @@ export function useSubmitStatus(draftValues: Partial<StatusRequest> | undefined)
   const cached = cache.get("latest_published_status");
   const [statusInfo, setStatusInfo] = useState<StatusResponse>(cached ? JSON.parse(cached) : null);
 
-  const [status, setStatus] = useState({
-    cw: draftValues?.spoiler_text || "",
-    sensitive: false,
-    content: draftValues?.status || "",
-  });
-
-  const { handleSubmit, itemProps } = useForm<StatusFormValues>({
+  const { handleSubmit, itemProps, focus } = useForm<StatusFormValues>({
     onSubmit: async (value: StatusFormValues) => {
       try {
         if (value.status.trim().length === 0 && value.files.length === 0)
@@ -43,11 +37,11 @@ export function useSubmitStatus(draftValues: Partial<StatusRequest> | undefined)
         const newStatus: Partial<StatusRequest> = {
           ...value,
           media_ids: mediaIds,
-          sensitive: status.sensitive,
           content_type: value.isMarkdown ? "text/markdown" : "text/plain",
         };
 
         const response = await apiServer.postNewStatus(newStatus);
+
         value.scheduled_at
           ? showToast(Toast.Style.Success, "Scheduled", dateTimeFormatter(value.scheduled_at, "long"))
           : showToast(Toast.Style.Success, "Status has been published! ");
@@ -72,7 +66,11 @@ export function useSubmitStatus(draftValues: Partial<StatusRequest> | undefined)
         }
       },
     },
+    initialValues: {
+      ...draftValues,
+      sensitive: false,
+    }
   });
 
-  return { handleSubmit, status, setStatus, statusInfo, openActionText, itemProps };
+  return { handleSubmit, statusInfo, openActionText, itemProps, focus };
 }

@@ -1,9 +1,8 @@
-import { useRef } from "react";
-import { useForm } from "@raycast/utils";
+import { useEffect } from "react";
 import { Form, ActionPanel, Action, Icon, getPreferenceValues, LaunchProps } from "@raycast/api";
 
 import { StatusRequest } from "./utils/types";
-import { StatusFormValues, useSubmitStatus } from "./hooks/usePostStatus";
+import { useSubmitStatus } from "./hooks/usePostStatus";
 import { useMe } from "./hooks/useMe";
 
 import VisibilityDropdown from "./components/VisibilityDropdown";
@@ -15,20 +14,17 @@ interface CommandProps extends LaunchProps<{ draftValues: Partial<StatusRequest>
 
 export default function SimpleCommand(props: CommandProps) {
   const { draftValues } = props;
-  const { handleSubmit, status, setStatus, statusInfo, openActionText, itemProps } = useSubmitStatus(draftValues);
+  const { handleSubmit, statusInfo, openActionText, itemProps, focus } = useSubmitStatus(draftValues);
 
   const { username, fetchUsername } = useMe();
   if (username.length === 0) fetchUsername();
 
-  const cwRef = useRef<Form.TextField>(null);
+  useEffect(() => {
+    itemProps.sensitive.value
+      ? focus('spoiler_text')
+      : focus('status')
 
-  const handleCw = (value: boolean) => {
-    setStatus((prevState) => ({
-      ...prevState,
-      sensitive: value,
-    }));
-    cwRef.current?.focus();
-  };
+  }, [itemProps.sensitive.value])
 
   return (
     <Form
@@ -42,8 +38,8 @@ export default function SimpleCommand(props: CommandProps) {
       }
     >
       <Form.Description title="Account" text={`${username}@${instance}`} />
-      {status.sensitive && (
-        <Form.TextField title="CW" placeholder={"content warning"} ref={cwRef} {...itemProps.spoiler_text} />
+      {itemProps.sensitive.value && (
+        <Form.TextField title="CW" placeholder={"content warning"} {...itemProps.spoiler_text} />
       )}
       <Form.TextArea
         title="Content"
@@ -55,7 +51,10 @@ export default function SimpleCommand(props: CommandProps) {
       {!props.children && <VisibilityDropdown />}
       {props.children}
       {enableMarkdown && <Form.Checkbox label="Markdown" storeValue {...itemProps.isMarkdown} />}
-      <Form.Checkbox id="sensitive" label="Sensitive" value={status.sensitive} onChange={handleCw} storeValue />
+      <Form.Checkbox
+        label="Sensitive"
+        {...itemProps.sensitive}
+        storeValue />
     </Form>
   );
 }
