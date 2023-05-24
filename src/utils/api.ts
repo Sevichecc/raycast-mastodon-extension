@@ -29,6 +29,7 @@ const CONFIG = {
 const requestApi = async <T>(
   method: "GET" | "POST" | "PUT" = "GET",
   endpoint: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   body?: any,
   isFormData?: boolean
 ): Promise<T> => {
@@ -75,7 +76,8 @@ const createApp = async (): Promise<Credentials> =>
   requestApi<Credentials>("POST", CONFIG.appUrl, {
     client_name: "Raycast-Mastodon-Extension",
     redirect_uris: "https://raycast.com/redirect?packageName=Extension",
-    scopes: "read:statuses write:statuses read:bookmarks read:accounts write:media",
+    scopes:
+      "read:statuses read:bookmarks read:accounts read:search read:favourites write:favourites write:conversations write:media write:bookmarks write:statuses",
     website: "https://raycast.com",
   });
 
@@ -125,10 +127,12 @@ const favouriteStatus = async (id: string): Promise<Status> =>
 const undoFavouriteStatus = async (id: string): Promise<Status> =>
   requestApi<Status>("POST", `${CONFIG.statusesUrl}/${id}/unfavourite`);
 
-const boostStatus = async (id: string): Promise<Status> =>
-  requestApi<Status>("POST", `${CONFIG.statusesUrl}/${id}/reblog`);
+const reblogStatus = async (id: string): Promise<Status> => {
+  console.log(`${CONFIG.statusesUrl}/${id}/reblog`);
+  return requestApi<Status>("POST", `${CONFIG.statusesUrl}/${id}/reblog`);
+};
 
-const undoBoostStatus = async (id: string): Promise<Status> =>
+const undoReblogStatus = async (id: string): Promise<Status> =>
   requestApi<Status>("POST", `${CONFIG.statusesUrl}/${id}/unreblog`);
 
 const toggleBookmark = async (id: string): Promise<Status> =>
@@ -145,8 +149,8 @@ export default {
   fetchHomeTL,
   fetchPublicTL,
   toggleBookmark,
-  boostStatus,
-  undoBoostStatus,
+  reblogStatus,
+  undoReblogStatus,
   favouriteStatus,
   undoFavouriteStatus,
 };
