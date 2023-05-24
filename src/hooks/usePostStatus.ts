@@ -2,7 +2,7 @@ import { useState } from "react";
 import { showToast, popToRoot, Toast, Cache } from "@raycast/api";
 import apiServer from "../utils/api";
 import { MastodonError, StatusResponse, StatusRequest } from "../utils/types";
-import { dateTimeFormatter } from "../utils/util";
+import { dateTimeFormatter } from "../utils/helpers";
 import { useForm } from "@raycast/utils";
 
 const cache = new Cache();
@@ -24,7 +24,7 @@ export function useSubmitStatus(draftValues: Partial<StatusRequest> | undefined)
       try {
         if (value.status.trim().length === 0 && value.files.length === 0)
           throw new Error("You might forget the content, right ? ");
-        
+
         showToast(Toast.Style.Animated, "Publishing to the Fediverse ...");
 
         const mediaIds = await Promise.all(
@@ -69,7 +69,7 @@ export function useSubmitStatus(draftValues: Partial<StatusRequest> | undefined)
     initialValues: {
       ...draftValues,
       sensitive: false,
-    }
+    },
   });
 
   return { handleSubmit, statusInfo, openActionText, itemProps, focus };

@@ -101,15 +101,15 @@
           "value": "public"
         },
         {
-          "title": "🙈 Unlisted",
+          "title": "🔓 Unlisted",
           "value": "unlisted"
         },
         {
-          "title": "👥 Followers-only",
+          "title": "🔒 Followers only",
           "value": "private"
         },
         {
-          "title": "✉️ Direct",
+          "title": "✉️ Mentioned people only",
           "value": "direct"
         }
       ]

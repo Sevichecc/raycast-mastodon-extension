@@ -4,7 +4,7 @@ import { Status, MastodonError } from "./utils/types";
 
 import { getAccessToken } from "./utils/oauth";
 import apiServer from "./utils/api";
-import { statusParser } from "./utils/util";
+import { statusParser } from "./utils/helpers";
 
 const cache = new Cache();
 

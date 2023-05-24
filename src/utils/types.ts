@@ -9,12 +9,6 @@ export interface Preference {
   enableMarkdown: boolean;
 }
 
-export interface VisibilityOption {
-  title: string;
-  value: VisibilityScope;
-  icon: Icon;
-}
-
 // Error
 export interface MastodonError {
   error: string;

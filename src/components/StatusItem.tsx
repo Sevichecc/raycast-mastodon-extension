@@ -1,7 +1,7 @@
 import { List, Icon, Image, Color } from "@raycast/api";
 import { Status } from "../utils/types";
-import { statusParser, getTextForVisibility, getIconForVisibility } from "../utils/util";
-import { dateTimeFormatter } from "../utils/util";
+import { statusParser, getTextForVisibility, getIconForVisibility } from "../utils/helpers";
+import { dateTimeFormatter } from "../utils/helpers";
 import StatusAction from "./StatusAction";
 interface StatusItemProps {
   status: Status;
