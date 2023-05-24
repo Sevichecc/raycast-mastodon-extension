@@ -49,6 +49,11 @@ export const statusParser = (
   );
 };
 
+export const errorHandler = (error: MastodonError | Error) => {
+  const requestErr = error as MastodonError;
+  return showToast(Toast.Style.Failure, "Error", requestErr.error || (error as Error).message);
+};
+
 /**
  * @source https://github.com/raycast/extensions/pull/5001/files#diff-a23f4b1af6a806e43e32f070b2f7ef858103f894395ce378fb2c1da4b9a2b2f1
  * @author BasixKOR
@@ -80,7 +85,5 @@ export const isVisiblityPrivate = (visibility: VisibilityScope) => {
   return visibility === "private" || visibility === "direct";
 };
 
-export const errorHandler = (error: MastodonError | Error) => {
-  const requestErr = error as MastodonError;
-  return showToast(Toast.Style.Failure, "Error", requestErr.error || (error as Error).message);
-};
+
+

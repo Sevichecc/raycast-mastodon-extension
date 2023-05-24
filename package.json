@@ -21,7 +21,7 @@
     {
       "name": "status",
       "title": "Add Status",
-      "description": "Publish status with attenchments, or scheduled status",
+      "description": "Publish status with attachments, or scheduled status",
       "mode": "view"
     },
     {
