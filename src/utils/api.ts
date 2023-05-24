@@ -27,7 +27,7 @@ const CONFIG = {
 };
 
 const requestApi = async <T>(
-  method: "GET" | "POST" | "PUT" = "GET",
+  method: "GET" | "POST" | "PUT" | "DELETE" = "GET",
   endpoint: string,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   body?: any,
@@ -121,16 +121,16 @@ const fetchPublicTL = async (): Promise<Status[]> => requestApi<Status[]>("GET",
 const postNewStatus = async (statusOptions: Partial<StatusRequest>): Promise<StatusResponse> =>
   requestApi<StatusResponse>("POST", CONFIG.statusesUrl, statusOptions);
 
+const deleteStatus = async (id: string): Promise<Status> => requestApi<Status>("DELETE", `${CONFIG.statusesUrl}/${id}`);
+
 const favouriteStatus = async (id: string): Promise<Status> =>
   requestApi<Status>("POST", `${CONFIG.statusesUrl}/${id}/favourite`);
 
 const undoFavouriteStatus = async (id: string): Promise<Status> =>
   requestApi<Status>("POST", `${CONFIG.statusesUrl}/${id}/unfavourite`);
 
-const reblogStatus = async (id: string): Promise<Status> => {
-  console.log(`${CONFIG.statusesUrl}/${id}/reblog`);
-  return requestApi<Status>("POST", `${CONFIG.statusesUrl}/${id}/reblog`);
-};
+const reblogStatus = async (id: string): Promise<Status> =>
+  requestApi<Status>("POST", `${CONFIG.statusesUrl}/${id}/reblog`);
 
 const undoReblogStatus = async (id: string): Promise<Status> =>
   requestApi<Status>("POST", `${CONFIG.statusesUrl}/${id}/unreblog`);
@@ -145,6 +145,7 @@ export default {
   fetchToken,
   createApp,
   postNewStatus,
+  deleteStatus,
   fetchAccountInfo,
   uploadAttachment,
   fetchBookmarks,
