@@ -1,6 +1,6 @@
 import { getPreferenceValues, Color, Form } from "@raycast/api";
 import { VisibilityScope } from "../utils/types";
-import { getIconForVisibility, getTextForVisibility } from "../utils/helpers";
+import { getIconForVisibility, getNameForVisibility } from "../utils/helpers";
 
 const visibilityOptions: VisibilityScope[] = [
   "public", "unlisted", "private", "direct",
@@ -15,7 +15,7 @@ const VisibilityDropdown = () => {
         <Form.Dropdown.Item
           key={option}
           value={option}
-          title={getTextForVisibility(option)}
+          title={getNameForVisibility(option)}
           icon={{ source: getIconForVisibility(option), tintColor: Color.SecondaryText }}
         />
       ))}

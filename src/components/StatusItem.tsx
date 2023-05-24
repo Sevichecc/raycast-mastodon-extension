@@ -1,6 +1,6 @@
 import { List, Icon, Image, Color } from "@raycast/api";
 import { Status } from "../utils/types";
-import { statusParser, getTextForVisibility, getIconForVisibility } from "../utils/helpers";
+import { statusParser, getNameForVisibility, getIconForVisibility } from "../utils/helpers";
 import { dateTimeFormatter } from "../utils/helpers";
 import StatusAction from "./StatusAction";
 interface StatusItemProps {
@@ -49,7 +49,7 @@ const StatusItem: React.FC<StatusItemProps> = ({ status, showMetaData }) => {
                 <List.Item.Detail.Metadata.Separator />
                 <List.Item.Detail.Metadata.Label
                   title="Visibility"
-                  text={getTextForVisibility(status.visibility)}
+                  text={getNameForVisibility(status.visibility)}
                   icon={getIconForVisibility(status.visibility)}
                 />
                 <List.Item.Detail.Metadata.Label title="Published Time" text={time} />
