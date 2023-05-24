@@ -17,7 +17,7 @@ export function useSubmitStatus(draftValues: Partial<StatusRequest> | undefined)
   const [openActionText, setOpenActionText] = useState("Open the last published status");
 
   const cached = cache.get("latest_published_status");
-  const [statusInfo, setStatusInfo] = useState<StatusResponse>(cached ? JSON.parse(cached) : null);
+  const [latestStatus, setLatestStatus] = useState<StatusResponse>(cached ? JSON.parse(cached) : null);
 
   const validator = (value: StatusFormValues) => {
     if (value.status.trim().length === 0 && value.files.length === 0)
@@ -56,7 +56,7 @@ export function useSubmitStatus(draftValues: Partial<StatusRequest> | undefined)
           ? showToast(Toast.Style.Success, "Scheduled", dateTimeFormatter(value.scheduled_at, "long"))
           : showToast(Toast.Style.Success, "Status has been published! ");
 
-        setStatusInfo(response);
+        setLatestStatus(response);
         setOpenActionText("View the status in Browser");
         cache.set("latest_published_status", JSON.stringify(response));
         setTimeout(() => popToRoot(), 2000);
@@ -70,5 +70,5 @@ export function useSubmitStatus(draftValues: Partial<StatusRequest> | undefined)
     },
   });
 
-  return { handleSubmit, statusInfo, openActionText, itemProps, focus };
+  return { handleSubmit, latestStatus, openActionText, itemProps, focus };
 }

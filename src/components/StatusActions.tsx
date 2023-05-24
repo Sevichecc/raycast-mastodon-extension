@@ -1,30 +1,49 @@
-import { ActionPanel, Action, Icon, Color } from "@raycast/api";
+import { ActionPanel, Action, Icon } from "@raycast/api";
 import { Status } from "../utils/types";
 import { isVisiblityPrivate } from "../utils/helpers";
 
 interface StatusActionProps {
   status: Status;
   toggleReblog: (status: Status) => void,
-  reblogInfo: {
-    count: number,
-    reblogged: boolean
+  toggleFavourite: (status: Status) => void,
+  toggleBookmark: (status: Status) => void,
+  statusInfo: {
+    reblogsCount: number,
+    reblogged: boolean,
+    favouritesCount: number,
+    favourited: boolean,
+    bookmarked: boolean
   }
 }
 
-const StatusAction: React.FC<StatusActionProps> = ({ status, toggleReblog, reblogInfo }) => {
+const StatusAction: React.FC<StatusActionProps> = ({ status, toggleReblog, toggleFavourite, toggleBookmark, statusInfo }) => {
 
   return (
     <ActionPanel>
       {status.url && <Action.OpenInBrowser url={status.url} />}
       {!isVisiblityPrivate(status.visibility) && (
         <Action
-          title={reblogInfo.reblogged ? "Undo Reblog" : "Reblog"}
-          icon={reblogInfo.reblogged ? Icon.Undo : Icon.Repeat}
+          title={statusInfo.reblogged ? "Undo Reblog" : "Reblog"}
+          icon={statusInfo.reblogged ? Icon.Undo : Icon.Repeat}
           onAction={() => {
             toggleReblog(status)
           }}
         />
       )}
+      <Action
+        title={statusInfo.favourited ? "Undo Favourite" : "Favourite"}
+        icon={statusInfo.favourited ? Icon.StarDisabled : Icon.Star}
+        onAction={() => {
+          toggleFavourite(status)
+        }}
+      />
+      <Action
+        title={statusInfo.bookmarked ? "Remove Bookmark" : "Add Bookmark"}
+        icon={statusInfo.bookmarked ? Icon.Minus : Icon.Bookmark}
+        onAction={() => {
+          toggleBookmark(status)
+        }}
+      />
     </ActionPanel>
   );
 };

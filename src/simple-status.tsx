@@ -14,7 +14,7 @@ interface CommandProps extends LaunchProps<{ draftValues: Partial<StatusRequest>
 
 export default function SimpleCommand(props: CommandProps) {
   const { draftValues } = props;
-  const { handleSubmit, statusInfo, openActionText, itemProps, focus } = useSubmitStatus(draftValues);
+  const { handleSubmit, latestStatus, openActionText, itemProps, focus } = useSubmitStatus(draftValues);
 
   const { username, fetchUsername } = useMe();
   if (username.length === 0) fetchUsername();
@@ -29,7 +29,7 @@ export default function SimpleCommand(props: CommandProps) {
       actions={
         <ActionPanel>
           <Action.SubmitForm onSubmit={handleSubmit} title={"Toot"} icon={Icon.Upload} />
-          {statusInfo && <Action.OpenInBrowser url={statusInfo.url} title={openActionText} />}
+          {latestStatus && <Action.OpenInBrowser url={latestStatus.url} title={openActionText} />}
           {instance && <Action.OpenInBrowser url={`https://${instance}/home`} title="Open Mastodon in Browser" />}
         </ActionPanel>
       }

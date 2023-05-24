@@ -4,7 +4,7 @@ import { statusParser, getNameForVisibility, getIconForVisibility } from "../uti
 import { dateTimeFormatter } from "../utils/helpers";
 
 import StatusAction from "./StatusActions";
-import { useReblog } from "../hooks/useReblog";
+import { useInteract } from "../hooks/useInteract";
 interface StatusItemProps {
   status: Status;
   showMetaData?: boolean;
@@ -13,7 +13,7 @@ interface StatusItemProps {
 const StatusItem: React.FC<StatusItemProps> = ({ status, showMetaData }) => {
   const content = status.spoiler_text || status.content;
   const time = dateTimeFormatter(new Date(status.created_at), "short");
-  const { toggleReblog, reblogInfo } = useReblog(status)
+  const { statusInfo, toggleReblog, toggleFavourite, toggleBookmark } = useInteract(status)
 
   return (
     <List.Item
@@ -30,18 +30,18 @@ const StatusItem: React.FC<StatusItemProps> = ({ status, showMetaData }) => {
               <List.Item.Detail.Metadata>
                 <List.Item.Detail.Metadata.Label
                   title="Reblogs"
-                  text={String(reblogInfo.count)}
+                  text={String(statusInfo.reblogsCount)}
                   icon={{
                     source: Icon.Repeat,
-                    tintColor: reblogInfo.reblogged ? Color.Purple : Color.PrimaryText,
+                    tintColor: statusInfo.reblogged ? Color.Purple : Color.PrimaryText,
                   }}
                 />
                 <List.Item.Detail.Metadata.Label
                   title="Favorites"
-                  text={String(status.favourites_count)}
+                  text={String(statusInfo.favouritesCount)}
                   icon={{
                     source: Icon.Star,
-                    tintColor: status.favourited ? Color.Yellow : Color.PrimaryText,
+                    tintColor: statusInfo.favourited ? Color.Yellow : Color.PrimaryText,
                   }}
                 />
                 <List.Item.Detail.Metadata.Label
@@ -64,8 +64,11 @@ const StatusItem: React.FC<StatusItemProps> = ({ status, showMetaData }) => {
       actions={
         <StatusAction
           status={status}
+          statusInfo={statusInfo}
           toggleReblog={toggleReblog}
-          reblogInfo={reblogInfo} />}
+          toggleFavourite={toggleFavourite}
+          toggleBookmark={toggleBookmark}
+        />}
     />
   );
 };
