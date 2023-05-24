@@ -1,6 +1,8 @@
 import { Status, VisibilityScope } from "./types";
 import { NodeHtmlMarkdown } from "node-html-markdown";
 import { Icon } from "@raycast/api";
+import { showToast, Toast } from "@raycast/api";
+import { MastodonError } from "../utils/types";
 
 const nhm = new NodeHtmlMarkdown();
 
@@ -47,10 +49,10 @@ export const statusParser = (
   );
 };
 
-/** 
+/**
  * @source https://github.com/raycast/extensions/pull/5001/files#diff-a23f4b1af6a806e43e32f070b2f7ef858103f894395ce378fb2c1da4b9a2b2f1
  * @author BasixKOR
-*/
+ */
 
 const ICON_MAP: Record<VisibilityScope, Icon> = {
   public: Icon.Globe,
@@ -62,15 +64,23 @@ const ICON_MAP: Record<VisibilityScope, Icon> = {
 const NAME_MAP: Record<VisibilityScope, string> = {
   public: "Public",
   unlisted: "Unlisted",
-  private:  'Followers-only',
-  direct: 'Mentioned people only'
+  private: "Followers-only",
+  direct: "Mentioned people only",
 };
 
-export function getIconForVisibility(visibility: VisibilityScope): Icon {
+export const getIconForVisibility = (visibility: VisibilityScope): Icon => {
   return ICON_MAP[visibility];
-}
+};
 
-export function getNameForVisibility(visibility: VisibilityScope) {
+export const getNameForVisibility = (visibility: VisibilityScope) => {
   return NAME_MAP[visibility];
-}
+};
 
+export const isVisiblityPrivate = (visibility: VisibilityScope) => {
+  return visibility === "private" || visibility === "direct";
+};
+
+export const errorHandler = (error: MastodonError | Error) => {
+  const requestErr = error as MastodonError;
+  return showToast(Toast.Style.Failure, "Error", requestErr.error || (error as Error).message);
+};

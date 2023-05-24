@@ -2,7 +2,7 @@ import { useState } from "react";
 import { showToast, popToRoot, Toast, Cache } from "@raycast/api";
 import apiServer from "../utils/api";
 import { MastodonError, StatusResponse, StatusRequest } from "../utils/types";
-import { dateTimeFormatter } from "../utils/helpers";
+import { dateTimeFormatter, errorHandler } from "../utils/helpers";
 import { useForm } from "@raycast/utils";
 
 const cache = new Cache();
@@ -61,8 +61,7 @@ export function useSubmitStatus(draftValues: Partial<StatusRequest> | undefined)
         cache.set("latest_published_status", JSON.stringify(response));
         setTimeout(() => popToRoot(), 2000);
       } catch (error) {
-        const requestErr = error as MastodonError;
-        showToast(Toast.Style.Failure, "Error", requestErr.error || (error as Error).message);
+        errorHandler(error as MastodonError);
       }
     },
     initialValues: {

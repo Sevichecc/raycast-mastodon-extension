@@ -2,7 +2,9 @@ import { List, Icon, Image, Color } from "@raycast/api";
 import { Status } from "../utils/types";
 import { statusParser, getNameForVisibility, getIconForVisibility } from "../utils/helpers";
 import { dateTimeFormatter } from "../utils/helpers";
-import StatusAction from "./StatusAction";
+
+import StatusAction from "./StatusActions";
+import { useReblog } from "../hooks/useReblog";
 interface StatusItemProps {
   status: Status;
   showMetaData?: boolean;
@@ -11,6 +13,7 @@ interface StatusItemProps {
 const StatusItem: React.FC<StatusItemProps> = ({ status, showMetaData }) => {
   const content = status.spoiler_text || status.content;
   const time = dateTimeFormatter(new Date(status.created_at), "short");
+  const { toggleReblog, reblogInfo } = useReblog(status)
 
   return (
     <List.Item
@@ -26,11 +29,11 @@ const StatusItem: React.FC<StatusItemProps> = ({ status, showMetaData }) => {
             showMetaData ? (
               <List.Item.Detail.Metadata>
                 <List.Item.Detail.Metadata.Label
-                  title="Boosts"
-                  text={String(status.reblogs_count)}
+                  title="Reblogs"
+                  text={String(reblogInfo.count)}
                   icon={{
                     source: Icon.Repeat,
-                    tintColor: status.reblogged ? Color.Purple : Color.PrimaryText,
+                    tintColor: reblogInfo.reblogged ? Color.Purple : Color.PrimaryText,
                   }}
                 />
                 <List.Item.Detail.Metadata.Label
@@ -58,7 +61,11 @@ const StatusItem: React.FC<StatusItemProps> = ({ status, showMetaData }) => {
           }
         />
       }
-      actions={<StatusAction status={status} />}
+      actions={
+        <StatusAction
+          status={status}
+          toggleReblog={toggleReblog}
+          reblogInfo={reblogInfo} />}
     />
   );
 };

@@ -1,4 +1,6 @@
-//  Reference: https://github.com/raycast/extensions/pull/5001#issuecomment-1461738396
+/** 
+ * @Reference https://github.com/raycast/extensions/pull/5001#issuecomment-1461738396
+*/
 
 import { List } from "@raycast/api";
 import { useHomeTL } from "./hooks/useHomeTL";
@@ -9,8 +11,8 @@ export default function Home() {
 
   return (
     <List isShowingDetail isLoading={isLoading}>
-      {statuses?.map((statuses) => (
-        <StatusItem key={statuses.id} status={statuses.reblog ? statuses.reblog : statuses} showMetaData />
+      {statuses?.map((status) => (
+        <StatusItem key={status.id} status={status.reblog ? status.reblog : status} showMetaData />
       ))}
     </List>
   );

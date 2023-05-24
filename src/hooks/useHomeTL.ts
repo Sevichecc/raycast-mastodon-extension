@@ -3,6 +3,7 @@ import { useEffect, useState, useCallback } from "react";
 import { getAccessToken } from "../utils/oauth";
 import { MastodonError, Status } from "../utils/types";
 import apiServer from "../utils/api";
+import { errorHandler } from "../utils/helpers";
 
 const cache = new Cache();
 
@@ -21,8 +22,7 @@ export function useHomeTL() {
       showToast(Toast.Style.Success, "Home timeline has been loaded");
       cache.set("latest_home_statuses", JSON.stringify(tlStatuses));
     } catch (error) {
-      const requestErr = error as MastodonError;
-      showToast(Toast.Style.Failure, "Error", requestErr.error || (error as Error).message);
+      errorHandler(error as MastodonError);
     } finally {
       setIsLoading(false);
     }
