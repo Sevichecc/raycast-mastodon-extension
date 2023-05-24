@@ -10,79 +10,77 @@ export function useInteract(status: Status) {
     reblogged: status.reblogged,
     favourited: status.favourited,
     favouritesCount: status.favourites_count,
-    bookmarked: status.bookmarked
-  })
+    bookmarked: status.bookmarked,
+  });
 
-   const toggleReblog = async (status: Status) => {
+  const toggleReblog = async (status: Status) => {
     try {
       if (status.reblogged && statusInfo.reblogged) {
         showToast(Toast.Style.Animated, "Undoing reblogged status ...");
-        apiServer.undoReblogStatus(status.id)
+        apiServer.undoReblogStatus(status.id);
         showToast(Toast.Style.Success, "Undo reblog!");
         setStatusInfo({
           ...statusInfo,
           reblogsCount: status.reblogs_count - 1,
-          reblogged: false
-        })
+          reblogged: false,
+        });
       } else {
         showToast(Toast.Style.Animated, "Reblogging status ...");
-        apiServer.reblogStatus(status.id),
-        showToast(Toast.Style.Success, "Reblogged!");
+        apiServer.reblogStatus(status.id), showToast(Toast.Style.Success, "Reblogged!");
         setStatusInfo({
           ...statusInfo,
           reblogsCount: status.reblogs_count + 1,
-          reblogged: true
-        })
-      }
-    } catch (error) {
-      errorHandler(error as MastodonError);
-    }
-    };
-  
-  const toggleFavourite = async (status: Status) => {
-    try {
-      if (status.favourited && statusInfo.favourited) {
-        showToast(Toast.Style.Animated, "Undoing favourite of the status ...");
-        apiServer.undoFavouriteStatus(status.id)
-        showToast(Toast.Style.Success, "Undo favourite!");
-        setStatusInfo({
-          ...statusInfo,
-          favourited: false,
-          favouritesCount:status.favourites_count - 1
-        })
-      } else {
-        showToast(Toast.Style.Animated, "Favouring the status ...");
-        apiServer.favouriteStatus(status.id),
-        showToast(Toast.Style.Success, "Has been favorited!");
-        setStatusInfo({
-          ...statusInfo,
-          favourited: true,
-          favouritesCount:status.favourites_count + 1
-        })
+          reblogged: true,
+        });
       }
     } catch (error) {
       errorHandler(error as MastodonError);
     }
   };
-  
-    const toggleBookmark = async (status: Status) => {
-      try {
+
+  const toggleFavourite = async (status: Status) => {
+    try {
+      if (status.favourited && statusInfo.favourited) {
+        showToast(Toast.Style.Animated, "Undoing favourite of the status ...");
+        apiServer.undoFavouriteStatus(status.id);
+        showToast(Toast.Style.Success, "Undo favourite!");
+        setStatusInfo({
+          ...statusInfo,
+          favourited: false,
+          favouritesCount: status.favourites_count - 1,
+        });
+      } else {
+        showToast(Toast.Style.Animated, "Favouring the status ...");
+        apiServer.favouriteStatus(status.id), showToast(Toast.Style.Success, "Has been favorited!");
+        setStatusInfo({
+          ...statusInfo,
+          favourited: true,
+          favouritesCount: status.favourites_count + 1,
+        });
+      }
+    } catch (error) {
+      errorHandler(error as MastodonError);
+    }
+  };
+
+  const toggleBookmark = async (status: Status) => {
+    try {
       if (status.bookmarked && statusInfo.bookmarked) {
         showToast(Toast.Style.Animated, "Removing Bookmark");
-        apiServer.undoBookmarkStatus(status.id)
+        apiServer.undoBookmarkStatus(status.id);
         showToast(Toast.Style.Success, "Has been remove from bookmarks");
         setStatusInfo({
           ...statusInfo,
-          bookmarked: false
-        })
+          bookmarked: false,
+        });
       } else {
         showToast(Toast.Style.Animated, "Bookmarking status ... ");
-        apiServer.bookmarkStatus(status.id)
+        apiServer.bookmarkStatus(status.id);
         showToast(Toast.Style.Success, "Added to bookmarks");
         setStatusInfo({
           ...statusInfo,
-          bookmarked: true
-        })
+          bookmarked: true,
+        });
       }
     } catch (error) {
       errorHandler(error as MastodonError);
@@ -92,6 +90,6 @@ export function useInteract(status: Status) {
     statusInfo,
     toggleReblog,
     toggleFavourite,
-    toggleBookmark
-  }
+    toggleBookmark,
+  };
 }

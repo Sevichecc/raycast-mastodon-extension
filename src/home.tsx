@@ -1,6 +1,6 @@
-/** 
+/**
  * @Reference https://github.com/raycast/extensions/pull/5001#issuecomment-1461738396
-*/
+ */
 
 import { List } from "@raycast/api";
 import { useHomeTL } from "./hooks/useHomeTL";

@@ -84,6 +84,3 @@ export const getNameForVisibility = (visibility: VisibilityScope) => {
 export const isVisiblityPrivate = (visibility: VisibilityScope) => {
   return visibility === "private" || visibility === "direct";
 };
-
-
-

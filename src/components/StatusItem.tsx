@@ -13,7 +13,7 @@ interface StatusItemProps {
 const StatusItem: React.FC<StatusItemProps> = ({ status, showMetaData }) => {
   const content = status.spoiler_text || status.content;
   const time = dateTimeFormatter(new Date(status.created_at), "short");
-  const { statusInfo, toggleReblog, toggleFavourite, toggleBookmark } = useInteract(status)
+  const { statusInfo, toggleReblog, toggleFavourite, toggleBookmark } = useInteract(status);
 
   return (
     <List.Item
@@ -68,7 +68,8 @@ const StatusItem: React.FC<StatusItemProps> = ({ status, showMetaData }) => {
           toggleReblog={toggleReblog}
           toggleFavourite={toggleFavourite}
           toggleBookmark={toggleBookmark}
-        />}
+        />
+      }
     />
   );
 };

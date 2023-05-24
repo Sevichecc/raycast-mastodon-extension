@@ -4,20 +4,25 @@ import { isVisiblityPrivate } from "../utils/helpers";
 
 interface StatusActionProps {
   status: Status;
-  toggleReblog: (status: Status) => void,
-  toggleFavourite: (status: Status) => void,
-  toggleBookmark: (status: Status) => void,
+  toggleReblog: (status: Status) => void;
+  toggleFavourite: (status: Status) => void;
+  toggleBookmark: (status: Status) => void;
   statusInfo: {
-    reblogsCount: number,
-    reblogged: boolean,
-    favouritesCount: number,
-    favourited: boolean,
-    bookmarked: boolean
-  }
+    reblogsCount: number;
+    reblogged: boolean;
+    favouritesCount: number;
+    favourited: boolean;
+    bookmarked: boolean;
+  };
 }
 
-const StatusAction: React.FC<StatusActionProps> = ({ status, toggleReblog, toggleFavourite, toggleBookmark, statusInfo }) => {
-
+const StatusAction: React.FC<StatusActionProps> = ({
+  status,
+  toggleReblog,
+  toggleFavourite,
+  toggleBookmark,
+  statusInfo,
+}) => {
   return (
     <ActionPanel>
       {status.url && <Action.OpenInBrowser url={status.url} />}
@@ -26,7 +31,7 @@ const StatusAction: React.FC<StatusActionProps> = ({ status, toggleReblog, toggl
           title={statusInfo.reblogged ? "Undo Reblog" : "Reblog"}
           icon={statusInfo.reblogged ? Icon.Undo : Icon.Repeat}
           onAction={() => {
-            toggleReblog(status)
+            toggleReblog(status);
           }}
         />
       )}
@@ -34,14 +39,14 @@ const StatusAction: React.FC<StatusActionProps> = ({ status, toggleReblog, toggl
         title={statusInfo.favourited ? "Undo Favourite" : "Favourite"}
         icon={statusInfo.favourited ? Icon.StarDisabled : Icon.Star}
         onAction={() => {
-          toggleFavourite(status)
+          toggleFavourite(status);
         }}
       />
       <Action
         title={statusInfo.bookmarked ? "Remove Bookmark" : "Add Bookmark"}
         icon={statusInfo.bookmarked ? Icon.Minus : Icon.Bookmark}
         onAction={() => {
-          toggleBookmark(status)
+          toggleBookmark(status);
         }}
       />
     </ActionPanel>

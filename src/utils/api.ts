@@ -135,10 +135,11 @@ const reblogStatus = async (id: string): Promise<Status> => {
 const undoReblogStatus = async (id: string): Promise<Status> =>
   requestApi<Status>("POST", `${CONFIG.statusesUrl}/${id}/unreblog`);
 
-const bookmarkStatus = async (id: string): Promise<Status> => 
-requestApi<Status>("POST", `${CONFIG.statusesUrl}/${id}/bookmark`)
+const bookmarkStatus = async (id: string): Promise<Status> =>
+  requestApi<Status>("POST", `${CONFIG.statusesUrl}/${id}/bookmark`);
 
-const undoBookmarkStatus = async (id: string): Promise<Status> =>  requestApi<Status>("POST", `${CONFIG.statusesUrl}/${id}/unbookmark`)
+const undoBookmarkStatus = async (id: string): Promise<Status> =>
+  requestApi<Status>("POST", `${CONFIG.statusesUrl}/${id}/unbookmark`);
 
 export default {
   fetchToken,
@@ -155,5 +156,5 @@ export default {
   favouriteStatus,
   undoFavouriteStatus,
   bookmarkStatus,
-  undoBookmarkStatus
+  undoBookmarkStatus,
 };
