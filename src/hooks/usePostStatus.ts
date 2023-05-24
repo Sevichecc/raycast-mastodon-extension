@@ -19,12 +19,22 @@ export function useSubmitStatus(draftValues: Partial<StatusRequest> | undefined)
   const cached = cache.get("latest_published_status");
   const [statusInfo, setStatusInfo] = useState<StatusResponse>(cached ? JSON.parse(cached) : null);
 
+  const validator = (value: StatusFormValues) => {
+    if (value.status.trim().length === 0 && value.files.length === 0)
+      throw new Error("You might forget the content, right ? ");
+    if (value.scheduled_at) {
+      const now = Date.now();
+      const scheduled = new Date(value.scheduled_at);
+      if (scheduled.getTime() - now < 300000) {
+        throw new Error("The scheduled time must be more than 5 minutes.");
+      }
+    }
+  };
+
   const { handleSubmit, itemProps, focus } = useForm<StatusFormValues>({
     onSubmit: async (value: StatusFormValues) => {
       try {
-        if (value.status.trim().length === 0 && value.files.length === 0)
-          throw new Error("You might forget the content, right ? ");
-
+        validator(value);
         showToast(Toast.Style.Animated, "Publishing to the Fediverse ...");
 
         const mediaIds = await Promise.all(
@@ -54,17 +64,6 @@ export function useSubmitStatus(draftValues: Partial<StatusRequest> | undefined)
         const requestErr = error as MastodonError;
         showToast(Toast.Style.Failure, "Error", requestErr.error || (error as Error).message);
       }
-    },
-    validation: {
-      scheduled_at: (value) => {
-        if (value) {
-          const now = Date.now();
-          const scheduled = new Date(value);
-          if (scheduled.getTime() - now < 300000) {
-            return "The scheduled time must be more than 5 minutes.";
-          }
-        }
-      },
     },
     initialValues: {
       ...draftValues,
