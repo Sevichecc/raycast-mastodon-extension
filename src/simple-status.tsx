@@ -20,11 +20,8 @@ export default function SimpleCommand(props: CommandProps) {
   if (username.length === 0) fetchUsername();
 
   useEffect(() => {
-    itemProps.sensitive.value
-      ? focus('spoiler_text')
-      : focus('status')
-
-  }, [itemProps.sensitive.value])
+    itemProps.sensitive.value ? focus("spoiler_text") : focus("status");
+  }, [itemProps.sensitive.value]);
 
   return (
     <Form
@@ -51,10 +48,7 @@ export default function SimpleCommand(props: CommandProps) {
       {!props.children && <VisibilityDropdown />}
       {props.children}
       {enableMarkdown && <Form.Checkbox label="Markdown" storeValue {...itemProps.isMarkdown} />}
-      <Form.Checkbox
-        label="Sensitive"
-        {...itemProps.sensitive}
-        storeValue />
+      <Form.Checkbox label="Sensitive" {...itemProps.sensitive} storeValue />
     </Form>
   );
 }

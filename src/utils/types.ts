@@ -1,5 +1,3 @@
-import type { Icon } from "@raycast/api";
-
 export type VisibilityScope = "public" | "unlisted" | "direct" | "private";
 
 export interface Preference {

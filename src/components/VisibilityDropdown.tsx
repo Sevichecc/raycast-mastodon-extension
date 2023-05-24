@@ -2,9 +2,7 @@ import { getPreferenceValues, Color, Form } from "@raycast/api";
 import { VisibilityScope } from "../utils/types";
 import { getIconForVisibility, getNameForVisibility } from "../utils/helpers";
 
-const visibilityOptions: VisibilityScope[] = [
-  "public", "unlisted", "private", "direct",
-]
+const visibilityOptions: VisibilityScope[] = ["public", "unlisted", "private", "direct"];
 
 const VisibilityDropdown = () => {
   const { defaultVisibility }: Preferences = getPreferenceValues();
