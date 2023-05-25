@@ -15,7 +15,7 @@ const VisibilityDropdown: React.FC<VisibilityDropdownProps> = ({ copiedVisiblity
     <Form.Dropdown
       id="visibility"
       title="Visibility"
-      storeValue={copiedVisiblity ? false : true}
+      storeValue={!copiedVisiblity}
       defaultValue={copiedVisiblity || defaultVisibility || undefined}
     >
       {visibilityOptions.map((option) => (
