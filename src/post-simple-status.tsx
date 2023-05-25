@@ -12,8 +12,9 @@ const { instance, enableMarkdown }: Preferences = getPreferenceValues();
 
 export interface LaunchContext {
   status: Status;
-  action: "post" | "edit";
+  action: "post" | "edit" | "reply";
 }
+
 export interface CommandProps extends LaunchProps {
   children?: React.ReactNode;
   draftValues: Partial<StatusRequest>;
@@ -40,11 +41,17 @@ export default function SimpleCommand({ children, draftValues, launchContext }: 
         </ActionPanel>
       }
     >
+      {launchContext?.action === "reply" && (
+        <Form.Description
+          title={`Reply To ${launchContext.status.account.acct}`}
+          text={contentExtractor(launchContext.status.content)}
+        />
+      )}
       <Form.Description title="Account" text={`${username}@${instance}`} />
       {itemProps.sensitive.value && (
         <Form.TextField title="CW" placeholder={"content warning"} {...itemProps.spoiler_text} />
       )}
-      {launchContext ? (
+      {launchContext?.action === "edit" ? (
         <Form.TextArea
           id="status"
           title="Content"

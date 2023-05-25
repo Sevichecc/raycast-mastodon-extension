@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { showToast, popToRoot, Toast, Cache } from "@raycast/api";
+import { showToast, popToRoot, Toast, Cache, LaunchType } from "@raycast/api";
 import apiServer from "../utils/api";
 import { MastodonError, StatusResponse, StatusRequest } from "../utils/types";
 import { dateTimeFormatter, errorHandler } from "../utils/helpers";
@@ -36,7 +36,7 @@ export function useSubmitStatus(draftValues: Partial<StatusRequest> | undefined,
     onSubmit: async (value: StatusFormValues) => {
       try {
         validator(value);
-        showToast(Toast.Style.Animated, launchContext ? "Updating status..." :"Publishing to the Fediverse ...");
+        showToast(Toast.Style.Animated, launchContext ? "Updating status..." : "Publishing to the Fediverse ...");
 
         const mediaIds = await Promise.all(
           value.files?.map(async (file: string) => {
@@ -51,17 +51,25 @@ export function useSubmitStatus(draftValues: Partial<StatusRequest> | undefined,
           content_type: value.isMarkdown ? "text/markdown" : "text/plain",
         };
 
-        const response =
-          (launchContext?.action === "edit" && launchContext.status)
-            ? await apiServer.editStatus(launchContext.status.id, {...newStatus, visibility: launchContext.status.visibility})
-            : await apiServer.postNewStatus(newStatus);
+        let response;
+        switch (launchContext?.action) {
+          case "edit":
+            response = await apiServer.editStatus(launchContext.status.id, {
+              ...newStatus,
+              visibility: launchContext.status.visibility,
+            });
+            break;
+          case "reply":
+            response = await apiServer.postNewStatus({ ...newStatus, in_reply_to_id: launchContext.status.id });
+            break;
+          default:
+            response = await apiServer.postNewStatus(newStatus);
+            break;
+        }
 
         value.scheduled_at
           ? showToast(Toast.Style.Success, "Scheduled", dateTimeFormatter(value.scheduled_at, "long"))
-          : showToast(
-              Toast.Style.Success,
-              launchContext ?  "Status has been updated!" : "Status has been published! "
-            );
+          : showToast(Toast.Style.Success, launchContext ? "Status has been updated!" : "Status has been published! ");
 
         setLatestStatus(response);
         setOpenActionText("View the status in Browser");

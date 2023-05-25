@@ -2,13 +2,22 @@ import { getPreferenceValues, Color, Form } from "@raycast/api";
 import { VisibilityScope } from "../utils/types";
 import { getIconForVisibility, getNameForVisibility } from "../utils/helpers";
 
+interface VisibilityDropdownProps {
+  copiedVisiblity?: VisibilityScope;
+}
+
 const visibilityOptions: VisibilityScope[] = ["public", "unlisted", "private", "direct"];
 
-const VisibilityDropdown = () => {
+const VisibilityDropdown: React.FC<VisibilityDropdownProps> = ({ copiedVisiblity }) => {
   const { defaultVisibility }: Preferences = getPreferenceValues();
 
   return (
-    <Form.Dropdown id="visibility" title="Visibility" storeValue={true} defaultValue={defaultVisibility || undefined}>
+    <Form.Dropdown
+      id="visibility"
+      title="Visibility"
+      storeValue={copiedVisiblity ? false : true}
+      defaultValue={copiedVisiblity || defaultVisibility || undefined}
+    >
       {visibilityOptions.map((option) => (
         <Form.Dropdown.Item
           key={option}
