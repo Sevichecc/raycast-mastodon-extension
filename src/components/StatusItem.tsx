@@ -10,7 +10,7 @@ import {
 import { dateTimeFormatter } from "../utils/helpers";
 
 import StatusAction from "./StatusActions";
-import { useInteract } from "../hooks/useInteract";
+import { useInteract } from "../hooks/useInteraction";
 import MyStatusActions from "./MyStatusActions";
 interface StatusItemProps {
   status: Status;
@@ -36,7 +36,7 @@ const StatusItem: React.FC<StatusItemProps> = ({ status, showMetaData }) => {
             showMetaData ? (
               <List.Item.Detail.Metadata>
                 <List.Item.Detail.Metadata.Label
-                  title="Reblogs"
+                  title="Boosts"
                   text={String(statusInfo.reblogsCount)}
                   icon={{
                     source: Icon.Repeat,

@@ -1,9 +1,11 @@
 import { useState } from "react";
-import { showToast, popToRoot, Toast, Cache, LaunchType } from "@raycast/api";
+import { showToast, popToRoot, Toast, Cache } from "@raycast/api";
+import { useForm } from "@raycast/utils";
+
 import apiServer from "../utils/api";
 import { MastodonError, StatusResponse, StatusRequest } from "../utils/types";
 import { dateTimeFormatter, errorHandler } from "../utils/helpers";
-import { useForm } from "@raycast/utils";
+
 import { LaunchContext } from "../post-simple-status";
 
 const cache = new Cache();
@@ -69,7 +71,7 @@ export function useSubmitStatus(draftValues: Partial<StatusRequest> | undefined,
 
         value.scheduled_at
           ? showToast(Toast.Style.Success, "Scheduled", dateTimeFormatter(value.scheduled_at, "long"))
-          : showToast(Toast.Style.Success, launchContext ? "Status has been updated!" : "Status has been published! ");
+          : showToast(Toast.Style.Success, launchContext ? "Status updated!" : "Status published! ");
 
         setLatestStatus(response);
         setOpenActionText("View the status in Browser");

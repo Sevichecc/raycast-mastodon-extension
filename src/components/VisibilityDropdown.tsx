@@ -6,9 +6,8 @@ interface VisibilityDropdownProps {
   copiedVisiblity?: VisibilityScope;
 }
 
-const visibilityOptions: VisibilityScope[] = ["public", "unlisted", "private", "direct"];
-
 const VisibilityDropdown: React.FC<VisibilityDropdownProps> = ({ copiedVisiblity }) => {
+  const visibilityOptions: VisibilityScope[] = ["public", "unlisted", "private", "direct"];
   const { defaultVisibility }: Preferences = getPreferenceValues();
 
   return (

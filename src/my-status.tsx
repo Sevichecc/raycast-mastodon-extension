@@ -1,11 +1,11 @@
 import { useEffect } from "react";
 import { Action, ActionPanel, List } from "@raycast/api";
+
 import { Status } from "./utils/types";
-
 import { contentExtractor, statusParser } from "./utils/helpers";
-import MyStatusActions from "./components/MyStatusActions";
-
 import { useMe } from "./hooks/useMe";;
+
+import MyStatusActions from "./components/MyStatusActions";
 import ReplyAction from "./components/ReplyAction";
 
 export default function ViewStatusCommand() {
@@ -18,7 +18,11 @@ export default function ViewStatusCommand() {
   const filterReblog = (statuses: Status[]) => statuses.filter((status) => !status.reblog);
 
   return (
-    <List isShowingDetail isLoading={isLoading} searchBarPlaceholder="Search your status">
+    <List
+      isShowingDetail
+      isLoading={isLoading}
+      searchBarPlaceholder="Search your status"
+    >
       {filterReblog(statuses)?.map((status) => (
         <List.Item
           title={contentExtractor(status.content)}

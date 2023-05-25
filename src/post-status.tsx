@@ -11,9 +11,9 @@ export default function DetailCommand(props: CommandProps) {
     <SimpleCommand {...props}>
       <Form.FilePicker id="files" value={files} onChange={setFiles} title="Attachments" />
       {files.length === 1 && <Form.TextArea id="description" title="Alt text" />}
-      <Form.DatePicker id="scheduled_at" title="Scheduled Time" />
+      <Form.DatePicker id="scheduled_at" title="Scheduled Tim e" />
       {props.launchContext?.action !== "edit" && (
-        <VisibilityDropdown copiedVisiblity={props.launchContext.status.visibility} />
+        <VisibilityDropdown copiedVisiblity={props.launchContext?.status.visibility} />
       )}
     </SimpleCommand>
   );

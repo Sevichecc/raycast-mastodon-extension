@@ -33,10 +33,10 @@ export function useMe() {
   const getMyStatuses = async () => {
     try {
       await getAccessToken();
-      showToast(Toast.Style.Animated, "Loading Status...");
+      showToast(Toast.Style.Animated, "Loading Statuses...");
       const status = await apiServer.fetchUserStatus();
       setStatuses(statuses);
-      showToast(Toast.Style.Success, "Statuses has been loaded");
+      showToast(Toast.Style.Success, "Statuses loaded");
       cache.set("latest_statuses", JSON.stringify(status));
     } catch (error) {
       errorHandler(error as MastodonError);

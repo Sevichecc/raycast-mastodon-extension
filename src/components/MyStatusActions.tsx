@@ -1,7 +1,7 @@
-import { Action, ActionPanel, Color, Icon, LaunchType, launchCommand } from "@raycast/api";
+import { Action, Icon, LaunchType, launchCommand } from "@raycast/api";
 import { Status } from "../utils/types";
 import { contentExtractor } from "../utils/helpers";
-import { useInteract } from "../hooks/useInteract";
+import { useInteract } from "../hooks/useInteraction";
 
 interface MyStatusActions {
   status: Status;

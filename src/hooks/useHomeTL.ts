@@ -15,11 +15,11 @@ export function useHomeTL() {
   const getHomeTL = useCallback(async () => {
     try {
       await getAccessToken();
-      showToast(Toast.Style.Animated, "Loading home timeline...");
+      showToast(Toast.Style.Animated, "Updating home timeline...");
       const tlStatuses = await apiServer.fetchHomeTL();
       setStatuses(tlStatuses);
 
-      showToast(Toast.Style.Success, "Home timeline has been loaded");
+      showToast(Toast.Style.Success, "Home timeline updated.");
       cache.set("latest_home_statuses", JSON.stringify(tlStatuses));
     } catch (error) {
       errorHandler(error as MastodonError);

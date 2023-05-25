@@ -6,6 +6,10 @@ export interface Preference {
   bookmarkLimit: string;
   enableMarkdown: boolean;
 }
+export interface LaunchContext {
+  status: Status;
+  action: "post" | "edit" | "reply";
+}
 
 // Error
 export interface MastodonError {
