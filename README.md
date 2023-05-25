@@ -6,6 +6,7 @@
 -  [Raycast](https://raycast.com)
 
 **Features**:
+- Boost / favourite / bookmark / reply / edit / delete status
 - Write status with markdown support.(Only if the instant supports Markdown)
 - Publish simple status with text.
 - Publish scheduled status with natural date format.
@@ -35,10 +36,6 @@ Input your Mastodon instance's URL, then click the "Continue" button in the bott
 
 ![](./metadata/mastodon-4.png)
 
-### View your latest status
-
-![](./metadata/mastodon-11.png)
-
 ### Mark status as sensitive 
 Toggle the "Sensitive" checkbox to mark the attached image as sensitive, or add a content warning to the status.
 
@@ -48,6 +45,21 @@ Toggle the "Sensitive" checkbox to mark the attached image as sensitive, or add 
 Toggle the "Markdown" checkbox to render markdown in the text file. Markdown shortcuts are also supported (e.g., pressing `⌘` + `B` will add `**bold**` around the selected text, `⌘` + `I` will make the selected text italic, etc.).
 
 ![](media/markdown.png)
+
+### View Home Timeline
+
+![](metadata/mastodon-12.png)
+### View your latest status
+
+![](metadata/mastodon-11.png)
+
+### Reply to Status
+![](metadata/mastodon-14.png)
+
+
+### Actions
+
+![](metadata/mastodon-13.png)
 
 ### Draft status 
 
@@ -64,6 +76,4 @@ Based on performance considerations, the number of statuses displayed is limited
 
 ![](media/setting-status.png)
 
-## Actions 
 
-<img src="./media/actions.png" alt="search limit" style="width:350px;"> 
