@@ -24,8 +24,8 @@ export interface CommandProps extends LaunchProps {
 export default function SimpleCommand({ children, draftValues, launchContext }: CommandProps) {
   const { handleSubmit, latestStatus, openActionText, itemProps, focus } = useSubmitStatus(draftValues, launchContext);
 
-  const { username, fetchUsername } = useMe();
-  if (username.length === 0) fetchUsername();
+  const { username, getUsername } = useMe();
+  if (username.length === 0) getUsername();
 
   useEffect(() => {
     itemProps.sensitive.value ? focus("spoiler_text") : focus("status");

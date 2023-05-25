@@ -12,7 +12,7 @@ export function useHomeTL() {
   const [statuses, setStatuses] = useState<Status[]>(cached ? JSON.parse(cached) : []);
   const [isLoading, setIsLoading] = useState(true);
 
-  const fetchHomeTL = useCallback(async () => {
+  const getHomeTL = useCallback(async () => {
     try {
       await getAccessToken();
       showToast(Toast.Style.Animated, "Loading home timeline...");
@@ -29,12 +29,12 @@ export function useHomeTL() {
   }, []);
 
   useEffect(() => {
-    fetchHomeTL();
+    getHomeTL();
   }, []);
 
   return {
     statuses,
-    fetchHomeTL,
+    getHomeTL,
     isLoading,
   };
 }

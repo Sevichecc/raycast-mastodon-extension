@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { getAccessToken } from "../utils/oauth";
 import apiServer from "../utils/api";
 import { Status, MastodonError } from "../utils/types";
+import { errorHandler } from "../utils/helpers";
 
 const cache = new Cache();
 
@@ -13,7 +14,7 @@ export function useMe() {
   const cached = cache.get("latest_statuses");
   const [statuses, setStatuses] = useState<Status[]>(cached ? JSON.parse(cached) : []);
 
-  const fetchUsername = useCallback(async () => {
+  const getUsername = useCallback(async () => {
     try {
       await getAccessToken();
       const storedUsername = await LocalStorage.getItem<string>("account-username");
@@ -25,11 +26,11 @@ export function useMe() {
         await LocalStorage.setItem("account-username", username);
       }
     } catch (error) {
-      console.error("Error during authorization or fetching account's username:", error);
+      errorHandler(error as MastodonError);
     }
   }, []);
 
-  const fetchMyStatuses = async () => {
+  const getMyStatuses = async () => {
     try {
       await getAccessToken();
       showToast(Toast.Style.Animated, "Loading Status...");
@@ -38,22 +39,21 @@ export function useMe() {
       showToast(Toast.Style.Success, "Statuses has been loaded");
       cache.set("latest_statuses", JSON.stringify(status));
     } catch (error) {
-      const requestErr = error as MastodonError;
-      showToast(Toast.Style.Failure, "Error", requestErr.error);
+      errorHandler(error as MastodonError);
     } finally {
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchUsername();
+    getUsername();
   }, []);
 
   return {
     username,
     isLoading,
     statuses,
-    fetchUsername,
-    fetchMyStatuses,
+    getUsername,
+    getMyStatuses,
   };
 }

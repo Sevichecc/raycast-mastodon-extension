@@ -15,7 +15,7 @@ export interface StatusFormValues extends StatusRequest {
 }
 
 export function useSubmitStatus(draftValues: Partial<StatusRequest> | undefined, launchContext: LaunchContext) {
-  const [openActionText, setOpenActionText] = useState("Open the last published status");
+  const [openActionText, setOpenActionText] = useState("Open the latest published status");
 
   const cached = cache.get("latest_published_status");
   const [latestStatus, setLatestStatus] = useState<StatusResponse>(cached ? JSON.parse(cached) : null);
@@ -27,7 +27,7 @@ export function useSubmitStatus(draftValues: Partial<StatusRequest> | undefined,
       const now = Date.now();
       const scheduled = new Date(value.scheduled_at);
       if (scheduled.getTime() - now < 300000) {
-        throw new Error("The scheduled time must be more than 5 minutes.");
+        throw new Error("The scheduled time must be >= 5 minutes.");
       }
     }
   };
