@@ -17,7 +17,7 @@ export interface StatusFormValues extends StatusRequest {
 }
 
 export function useSubmitStatus(draftValues: Partial<StatusRequest> | undefined, launchContext: LaunchContext) {
-  const [openActionText, setOpenActionText] = useState("Open the latest published status");
+  const [openActionText, setOpenActionText] = useState("View the latest published status");
 
   const cached = cache.get("latest_published_status");
   const [latestStatus, setLatestStatus] = useState<StatusResponse>(cached ? JSON.parse(cached) : null);
