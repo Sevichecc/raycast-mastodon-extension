@@ -25,7 +25,7 @@ export function useMe() {
         await LocalStorage.setItem("account-username", username);
       }
     } catch (error) {
-      console.error("Error during authorization or fetching account-username:", error);
+      console.error("Error during authorization or fetching account's username:", error);
     }
   }, []);
 

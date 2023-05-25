@@ -53,7 +53,7 @@ export function useSubmitStatus(draftValues: Partial<StatusRequest> | undefined,
 
         const response =
           (launchContext?.action === "edit" && launchContext.status)
-            ? await apiServer.editStatus(launchContext.status.id, newStatus)
+            ? await apiServer.editStatus(launchContext.status.id, {...newStatus, visibility: launchContext.status.visibility})
             : await apiServer.postNewStatus(newStatus);
 
         value.scheduled_at
