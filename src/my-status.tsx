@@ -8,10 +8,10 @@ import MyStatusActions from "./components/MyStatusActions";
 import { useMe } from "./hooks/useMe";
 
 export default function ViewStatusCommand() {
-  const { isLoading, statuses, fetchMyStatuses } = useMe()
+  const { isLoading, statuses, fetchMyStatuses } = useMe();
 
   useEffect(() => {
-    fetchMyStatuses()
+    fetchMyStatuses();
   }, []);
 
   const filterReblog = (statuses: Status[]) => statuses.filter((status) => !status.reblog);

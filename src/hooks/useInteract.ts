@@ -97,7 +97,7 @@ export function useInteract(status: Status) {
       errorHandler(error as MastodonError);
     }
   };
-  
+
   return {
     statusInfo,
     toggleReblog,

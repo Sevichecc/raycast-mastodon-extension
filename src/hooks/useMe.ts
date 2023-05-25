@@ -9,7 +9,7 @@ const cache = new Cache();
 export function useMe() {
   const [username, setUsername] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  
+
   const cached = cache.get("latest_statuses");
   const [statuses, setStatuses] = useState<Status[]>(cached ? JSON.parse(cached) : []);
 
@@ -29,22 +29,22 @@ export function useMe() {
     }
   }, []);
 
-    const fetchMyStatuses = async () => {
-      try {
-        await getAccessToken();
-        showToast(Toast.Style.Animated, "Loading Status...");
-        const status = await apiServer.fetchUserStatus();
-        setStatuses(statuses);
-        showToast(Toast.Style.Success, "Statuses has been loaded");
-        cache.set("latest_statuses", JSON.stringify(status));
-      } catch (error) {
-        const requestErr = error as MastodonError;
-        showToast(Toast.Style.Failure, "Error", requestErr.error);
-      } finally {
-        setIsLoading(false);
-      }
+  const fetchMyStatuses = async () => {
+    try {
+      await getAccessToken();
+      showToast(Toast.Style.Animated, "Loading Status...");
+      const status = await apiServer.fetchUserStatus();
+      setStatuses(statuses);
+      showToast(Toast.Style.Success, "Statuses has been loaded");
+      cache.set("latest_statuses", JSON.stringify(status));
+    } catch (error) {
+      const requestErr = error as MastodonError;
+      showToast(Toast.Style.Failure, "Error", requestErr.error);
+    } finally {
+      setIsLoading(false);
+    }
   };
-  
+
   useEffect(() => {
     fetchUsername();
   }, []);

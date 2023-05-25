@@ -9,7 +9,7 @@ interface MyStatusActions {
 }
 
 const MyStatusActions: React.FC<MyStatusActions> = ({ status }) => {
-  const { deleteStatus } = useInteract(status)
+  const { deleteStatus } = useInteract(status);
 
   return (
     <>
