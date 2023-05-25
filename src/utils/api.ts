@@ -74,11 +74,11 @@ const fetchToken = async (params: URLSearchParams): Promise<OAuth.TokenResponse>
 
 const createApp = async (): Promise<Credentials> =>
   requestApi<Credentials>("POST", CONFIG.appUrl, {
-    client_name: "Raycast-Mastodon-Extension",
+    client_name: "Raycast - Mastodon",
     redirect_uris: "https://raycast.com/redirect?packageName=Extension",
     scopes:
-      "read:statuses read:bookmarks read:accounts read:search read:favourites write:favourites write:conversations write:media write:bookmarks write:statuses",
-    website: "https://raycast.com",
+      "read:statuses read:bookmarks read:accounts read:favourites write:favourites write:media write:bookmarks write:statuses",
+    website: "https://raycast.com/SevicheCC/mastodon",
   });
 
 const fetchAccountInfo = async (): Promise<Account> => requestApi<Account>("GET", CONFIG.verifyCredentialsUrl);
