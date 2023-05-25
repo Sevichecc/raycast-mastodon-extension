@@ -16,7 +16,7 @@ import MyStatusActions from "./MyStatusActions";
 interface StatusItemProps {
   status: Status;
   showMetaData?: boolean;
-  originalStatus: Status;
+  originalStatus?: Status;
 }
 
 const StatusItem: React.FC<StatusItemProps> = ({ status, showMetaData, originalStatus }) => {
@@ -67,7 +67,7 @@ const StatusItem: React.FC<StatusItemProps> = ({ status, showMetaData, originalS
                   icon={getIconForVisibility(status.visibility)}
                 />
                 <List.Item.Detail.Metadata.Label title="Published Time" text={time} />
-                {originalStatus.reblog && (
+                {originalStatus?.reblog && (
                   <List.Item.Detail.Metadata.Label
                     title="Boosted by"
                     text={originalStatus.account.display_name}
