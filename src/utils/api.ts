@@ -121,6 +121,9 @@ const fetchPublicTL = async (): Promise<Status[]> => requestApi<Status[]>("GET",
 const postNewStatus = async (statusOptions: Partial<StatusRequest>): Promise<StatusResponse> =>
   requestApi<StatusResponse>("POST", CONFIG.statusesUrl, statusOptions);
 
+const editStatus = async (id: string, statusOptions: Partial<StatusRequest>): Promise<StatusResponse> =>
+  requestApi<StatusResponse>("PUT", `${CONFIG.statusesUrl}/${id}`, statusOptions);
+
 const deleteStatus = async (id: string): Promise<Status> => requestApi<Status>("DELETE", `${CONFIG.statusesUrl}/${id}`);
 
 const favouriteStatus = async (id: string): Promise<Status> =>
@@ -158,4 +161,5 @@ export default {
   undoFavouriteStatus,
   bookmarkStatus,
   undoBookmarkStatus,
+  editStatus,
 };

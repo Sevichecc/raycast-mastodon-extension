@@ -13,13 +13,13 @@
   "license": "MIT",
   "commands": [
     {
-      "name": "simple-status",
+      "name": "post-simple-status",
       "title": "Add Simple Status",
       "description": "Publish simple text status",
       "mode": "view"
     },
     {
-      "name": "status",
+      "name": "post-status",
       "title": "Add Status",
       "description": "Publish status with attachments, or scheduled status",
       "mode": "view"

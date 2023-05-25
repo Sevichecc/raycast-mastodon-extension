@@ -1,4 +1,4 @@
-import { showToast, Toast } from "@raycast/api";
+import { confirmAlert, showToast, Toast } from "@raycast/api";
 import { useState } from "react";
 import { errorHandler } from "../utils/helpers";
 import { Status, MastodonError } from "../utils/types";
@@ -86,10 +86,23 @@ export function useInteract(status: Status) {
       errorHandler(error as MastodonError);
     }
   };
+
+  const deleteStatus = async (status: Status) => {
+    try {
+      if (!(await confirmAlert({ title: "Are you sure?" }))) return;
+      showToast(Toast.Style.Animated, "Deleting status ...");
+      await apiServer.deleteStatus(status.id);
+      showToast(Toast.Style.Success, "Successfully deleted!");
+    } catch (error) {
+      errorHandler(error as MastodonError);
+    }
+  };
+  
   return {
     statusInfo,
     toggleReblog,
     toggleFavourite,
     toggleBookmark,
+    deleteStatus,
   };
 }

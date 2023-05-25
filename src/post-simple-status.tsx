@@ -1,20 +1,27 @@
 import { useEffect } from "react";
 import { Form, ActionPanel, Action, Icon, getPreferenceValues, LaunchProps } from "@raycast/api";
 
-import { StatusRequest } from "./utils/types";
+import { Status, StatusRequest } from "./utils/types";
 import { useSubmitStatus } from "./hooks/usePostStatus";
 import { useMe } from "./hooks/useMe";
 
 import VisibilityDropdown from "./components/VisibilityDropdown";
+import { contentExtractor } from "./utils/helpers";
 
 const { instance, enableMarkdown }: Preferences = getPreferenceValues();
-interface CommandProps extends LaunchProps<{ draftValues: Partial<StatusRequest> }> {
+
+export interface LaunchContext {
+  status: Status;
+  action: "post" | "edit";
+}
+export interface CommandProps extends LaunchProps {
   children?: React.ReactNode;
+  draftValues: Partial<StatusRequest>;
+  launchContext: LaunchContext;
 }
 
-export default function SimpleCommand(props: CommandProps) {
-  const { draftValues } = props;
-  const { handleSubmit, latestStatus, openActionText, itemProps, focus } = useSubmitStatus(draftValues);
+export default function SimpleCommand({ children, draftValues, launchContext }: CommandProps) {
+  const { handleSubmit, latestStatus, openActionText, itemProps, focus } = useSubmitStatus(draftValues, launchContext);
 
   const { username, fetchUsername } = useMe();
   if (username.length === 0) fetchUsername();
@@ -25,7 +32,6 @@ export default function SimpleCommand(props: CommandProps) {
 
   return (
     <Form
-      enableDrafts
       actions={
         <ActionPanel>
           <Action.SubmitForm onSubmit={handleSubmit} title={"Toot"} icon={Icon.Upload} />
@@ -38,15 +44,26 @@ export default function SimpleCommand(props: CommandProps) {
       {itemProps.sensitive.value && (
         <Form.TextField title="CW" placeholder={"content warning"} {...itemProps.spoiler_text} />
       )}
-      <Form.TextArea
-        title="Content"
-        placeholder={`Write something down ${itemProps.isMarkdown.value ? "with Markdown" : ""}`}
-        enableMarkdown={itemProps.isMarkdown.value}
-        autoFocus
-        {...itemProps.status}
-      />
-      {!props.children && <VisibilityDropdown />}
-      {props.children}
+      {launchContext ? (
+        <Form.TextArea
+          id="status"
+          title="Content"
+          placeholder={`Write something down ${itemProps.isMarkdown.value ? "with Markdown" : ""}`}
+          enableMarkdown={itemProps.isMarkdown.value}
+          defaultValue={contentExtractor(launchContext.status.content) ?? null}
+          autoFocus
+        />
+      ) : (
+        <Form.TextArea
+          title="Content"
+          placeholder={`Write something down ${itemProps.isMarkdown.value ? "with Markdown" : ""}`}
+          enableMarkdown={itemProps.isMarkdown.value}
+          autoFocus
+          {...itemProps.status}
+        />
+      )}
+      {!children && !launchContext?.status && <VisibilityDropdown />}
+      {children}
       {enableMarkdown && <Form.Checkbox label="Markdown" storeValue {...itemProps.isMarkdown} />}
       <Form.Checkbox label="Sensitive" {...itemProps.sensitive} storeValue />
     </Form>
