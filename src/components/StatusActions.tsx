@@ -22,7 +22,7 @@ const StatusAction: React.FC<StatusActionProps> = ({
   toggleFavourite,
   toggleBookmark,
   statusInfo,
-}) =>
+}) => (
   <ActionPanel.Section>
     {!isVisiblityPrivate(status.visibility) && (
       <Action
@@ -46,5 +46,6 @@ const StatusAction: React.FC<StatusActionProps> = ({
       onAction={() => toggleBookmark(status)}
     />
   </ActionPanel.Section>
+);
 
 export default StatusAction;

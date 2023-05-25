@@ -3,10 +3,10 @@ import { contentExtractor } from "../utils/helpers";
 import { Status } from "../utils/types";
 
 interface ReplyActionProps {
-  status: Status
+  status: Status;
 }
 
-const ReplyAction: React.FC<ReplyActionProps> = ({ status }) =>
+const ReplyAction: React.FC<ReplyActionProps> = ({ status }) => (
   <Action
     title={"Reply"}
     icon={Icon.Reply}
@@ -26,5 +26,6 @@ const ReplyAction: React.FC<ReplyActionProps> = ({ status }) =>
       });
     }}
   />
+);
 
 export default ReplyAction;

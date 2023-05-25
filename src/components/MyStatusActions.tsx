@@ -35,7 +35,8 @@ const MyStatusActions: React.FC<MyStatusActions> = ({ status }) => {
         title="Delete"
         icon={Icon.Trash}
         shortcut={{ modifiers: ["cmd"], key: "delete" }}
-        onAction={() => deleteStatus(status)} />
+        onAction={() => deleteStatus(status)}
+      />
     </>
   );
 };
