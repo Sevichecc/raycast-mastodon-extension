@@ -1,4 +1,4 @@
-import { ActionPanel, Action, Icon } from "@raycast/api";
+import { Action, Icon } from "@raycast/api";
 import { Status } from "../utils/types";
 import { isVisiblityPrivate } from "../utils/helpers";
 
@@ -24,32 +24,27 @@ const StatusAction: React.FC<StatusActionProps> = ({
   statusInfo,
 }) => {
   return (
-    <ActionPanel>
+    <>
       {status.url && <Action.OpenInBrowser url={status.url} />}
       {!isVisiblityPrivate(status.visibility) && (
         <Action
           title={statusInfo.reblogged ? "Undo Reblog" : "Reblog"}
           icon={statusInfo.reblogged ? Icon.Undo : Icon.Repeat}
-          onAction={() => {
-            toggleReblog(status);
-          }}
+          onAction={() => toggleReblog(status)}
         />
       )}
       <Action
         title={statusInfo.favourited ? "Undo Favourite" : "Favourite"}
         icon={statusInfo.favourited ? Icon.StarDisabled : Icon.Star}
-        onAction={() => {
-          toggleFavourite(status);
-        }}
+        onAction={() => toggleFavourite(status)}
       />
       <Action
         title={statusInfo.bookmarked ? "Remove Bookmark" : "Add Bookmark"}
         icon={statusInfo.bookmarked ? Icon.Minus : Icon.Bookmark}
-        onAction={() => {
-          toggleBookmark(status);
-        }}
+        onAction={() => toggleBookmark(status)}
       />
-    </ActionPanel>
+    </>
   );
 };
+
 export default StatusAction;

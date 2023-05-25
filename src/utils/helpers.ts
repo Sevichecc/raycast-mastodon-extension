@@ -1,8 +1,9 @@
-import { Status, VisibilityScope } from "./types";
+import { Account, Status, VisibilityScope } from "./types";
 import { NodeHtmlMarkdown } from "node-html-markdown";
 import { Icon } from "@raycast/api";
 import { showToast, Toast } from "@raycast/api";
 import { MastodonError } from "../utils/types";
+import { useMe } from "../hooks/useMe";
 
 const nhm = new NodeHtmlMarkdown();
 
@@ -49,6 +50,8 @@ export const statusParser = (
   );
 };
 
+export const contentExtractor = (html: string) => html.replace(/<.*?>/g, "");
+
 export const errorHandler = (error: MastodonError | Error) => {
   const requestErr = error as MastodonError;
   return showToast(Toast.Style.Failure, "Error", requestErr.error || (error as Error).message);
@@ -73,14 +76,13 @@ const NAME_MAP: Record<VisibilityScope, string> = {
   direct: "Mentioned people only",
 };
 
-export const getIconForVisibility = (visibility: VisibilityScope): Icon => {
-  return ICON_MAP[visibility];
-};
+export const getIconForVisibility = (visibility: VisibilityScope): Icon => ICON_MAP[visibility];
 
-export const getNameForVisibility = (visibility: VisibilityScope) => {
-  return NAME_MAP[visibility];
-};
+export const getNameForVisibility = (visibility: VisibilityScope) => NAME_MAP[visibility];
 
-export const isVisiblityPrivate = (visibility: VisibilityScope) => {
-  return visibility === "private" || visibility === "direct";
+export const isVisiblityPrivate = (visibility: VisibilityScope) => visibility === "private" || visibility === "direct";
+
+export const isMyStatus = (account: Account) => {
+  const { username } = useMe();
+  return username === account.acct;
 };

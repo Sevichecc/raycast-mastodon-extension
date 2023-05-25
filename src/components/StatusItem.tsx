@@ -1,10 +1,17 @@
-import { List, Icon, Image, Color } from "@raycast/api";
+import { List, Icon, Image, Color, ActionPanel } from "@raycast/api";
 import { Status } from "../utils/types";
-import { statusParser, getNameForVisibility, getIconForVisibility } from "../utils/helpers";
+import {
+  statusParser,
+  getNameForVisibility,
+  getIconForVisibility,
+  isMyStatus,
+  contentExtractor,
+} from "../utils/helpers";
 import { dateTimeFormatter } from "../utils/helpers";
 
 import StatusAction from "./StatusActions";
 import { useInteract } from "../hooks/useInteract";
+import MyStatusActions from "./MyStatusActions";
 interface StatusItemProps {
   status: Status;
   showMetaData?: boolean;
@@ -17,7 +24,7 @@ const StatusItem: React.FC<StatusItemProps> = ({ status, showMetaData }) => {
 
   return (
     <List.Item
-      title={content.replace(/<.*?>/g, "")}
+      title={contentExtractor(content)}
       icon={{
         source: status.account.avatar,
         mask: Image.Mask.Circle,
@@ -62,13 +69,16 @@ const StatusItem: React.FC<StatusItemProps> = ({ status, showMetaData }) => {
         />
       }
       actions={
-        <StatusAction
-          status={status}
-          statusInfo={statusInfo}
-          toggleReblog={toggleReblog}
-          toggleFavourite={toggleFavourite}
-          toggleBookmark={toggleBookmark}
-        />
+        <ActionPanel>
+          <StatusAction
+            status={status}
+            statusInfo={statusInfo}
+            toggleReblog={toggleReblog}
+            toggleFavourite={toggleFavourite}
+            toggleBookmark={toggleBookmark}
+          />
+          {isMyStatus(status.account) && <MyStatusActions status={status} />}
+        </ActionPanel>
       }
     />
   );
