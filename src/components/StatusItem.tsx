@@ -1,4 +1,4 @@
-import { List, Icon, Image, Color, ActionPanel } from "@raycast/api";
+import { List, Icon, Image, Color, ActionPanel, Action } from "@raycast/api";
 import { Status } from "../utils/types";
 import {
   statusParser,
@@ -78,6 +78,7 @@ const StatusItem: React.FC<StatusItemProps> = ({ status, showMetaData }) => {
             toggleBookmark={toggleBookmark}
           />
           {isMyStatus(status.account) && <MyStatusActions status={status} />}
+          {status.url && <Action.OpenInBrowser url={status.url} shortcut={{ modifiers: ["cmd"], key: "o" }} />}
         </ActionPanel>
       }
     />

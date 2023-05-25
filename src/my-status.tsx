@@ -5,7 +5,8 @@ import { Status } from "./utils/types";
 import { contentExtractor, statusParser } from "./utils/helpers";
 import MyStatusActions from "./components/MyStatusActions";
 
-import { useMe } from "./hooks/useMe";
+import { useMe } from "./hooks/useMe";;
+import ReplyAction from "./components/ReplyAction";
 
 export default function ViewStatusCommand() {
   const { isLoading, statuses, getMyStatuses } = useMe();
@@ -25,8 +26,9 @@ export default function ViewStatusCommand() {
           detail={<List.Item.Detail markdown={statusParser(status, "date")} />}
           actions={
             <ActionPanel>
-              <Action.OpenInBrowser title="Open Original Status" url={status.url} />
+              <ReplyAction status={status} />
               <MyStatusActions status={status} />
+              <Action.OpenInBrowser url={status.url} />
             </ActionPanel>
           }
         />
