@@ -1,3 +1,3 @@
-# Post to Mastodon Changelog
+# Mastodon Changelog
 
-## [Initial Version] - 2023-05-26
+## [Initial Version] - 2023-06-27
